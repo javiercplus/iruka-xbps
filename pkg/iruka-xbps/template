@@ -13,7 +13,7 @@ maintainer="JavierC <<www.javierc.online>>"
 license="WTFPL, BSD-3-Clause"
 homepage="https://github.com/javiercplus/iruka-xbps"
 distfiles="https://github.com/javiercplus/iruka-xbps/releases/download/${version}/iruka-xbps-main.tar.gz"
-checksum="576f138931542d2dd4413b324a83f0d91c27bc8d188027c95acc2874e7c3e192"
+checksum="d9ef83a7586d35e4ef7faf72cf5e86dfb36825800f60b4b483445884b1d945ae"
 
 post_install() {
     vlicense LICENSE
