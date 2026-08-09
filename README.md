@@ -14,6 +14,7 @@ A graphical front-end for the XBPS package manager, written in C++ using GTK 3.
 - Transaction queue to batch installation and removal operations.
 - Polkit integration via pkexec for system repository synchronization and package modifications.
 - Repository configuration editor.
+- Multilingual interface (Spanish and Russian) with an in-app language switcher.
 
 ## Prerequisites
 
@@ -40,6 +41,25 @@ A graphical front-end for the XBPS package manager, written in C++ using GTK 3.
    ninja -C builddir install
    ```
 
+When running from `builddir` (without installing), the translation catalogs
+are located automatically; the `Options > Language` menu works out of the box.
+
+## Packaging with xbps-src
+
+A Void Linux template lives in `pkg/iruka-xbps/template`. When building it,
+keep in mind:
+
+- `gettext` **must** stay in `hostmakedepends`: the Meson `i18n` module needs
+  `msgfmt`/`xgettext`/`msgmerge`/`msginit` to compile the `.mo` catalogs, and
+  xbps-src chroots only install what is listed there. Without it the package
+  ships with no translations.
+- The catalogs are installed under `/usr/share/locale/{es,ru}/LC_MESSAGES/`,
+  which matches the `LOCALEDIR` compiled into the binary.
+- The `distfiles`/`checksum` fields reference a GitHub release tarball. After
+  changing the source, regenerate the tarball and update the `checksum` field
+  (e.g. `xbps-src digest iruka-xbps`), otherwise the package is built from
+  stale code.
+
 ## Running
 
 Run the binary directly from the terminal or using the desktop launcher:
@@ -50,7 +70,7 @@ iruka-xbps
 ## Configuration
 
 Settings are saved in the user's config directory:
-`~/.config/iruka-xbps/settings.conf`
+`~/.config/iruka-xbps/iruka-xbps.conf` (includes the `ui_language` preference).
 
 ## License
 

@@ -1,9 +1,11 @@
 # Template file for 'iruka-xbps'
 pkgname=iruka-xbps
 version=0.1.0
-revision=1
+revision=2
 build_style=meson
-hostmakedepends="pkg-config"
+# gettext is required by the meson i18n module to compile the .mo catalogs
+# (msgfmt/xgettext/msgmerge/msginit); without it the translations are missing.
+hostmakedepends="pkg-config gettext"
 makedepends="gtk+3-devel"
 depends="polkit"
 short_desc="Graphical front-end for the XBPS package manager"
