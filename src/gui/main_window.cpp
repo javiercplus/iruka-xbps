@@ -59,6 +59,10 @@ void MainWindow::reloadUi() {
         g_source_remove(m_searchDebounceId);
         m_searchDebounceId = 0;
     }
+    if (m_sizeDebounceId) {
+        g_source_remove(m_sizeDebounceId);
+        m_sizeDebounceId = 0;
+    }
     if (m_progressTimerId) {
         g_source_remove(m_progressTimerId);
         m_progressTimerId = 0;

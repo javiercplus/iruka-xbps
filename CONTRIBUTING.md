@@ -45,6 +45,10 @@ translations:
    - Append the language code to `po/LINGUAS`.
    - Create `po/<lang>.po`, e.g. `msginit --input=po/iruka-xbps.pot --locale=<lang>`.
    - Fill in the translations and rebuild (see targets above).
+   - **English is not listed in `po/LINGUAS`**: it is the source language (the
+     `msgid` strings) and needs no catalog. The language menu entry for English
+     uses the code `"en"`, which makes gettext fall back to the untranslated
+     strings.
 
 5. **Runtime notes:**
    - When running from the build directory the catalogs are located automatically

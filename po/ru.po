@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iruka-xbps 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-08 00:00+0000\n"
+"POT-Creation-Date: 2026-08-09 01:26-0400\n"
 "PO-Revision-Date: 2026-08-08 00:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -13,295 +13,432 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
+#: src/main.cpp:42
 msgid "Error: xbps-query not found at "
 msgstr "Ошибка: xbps-query не найден по пути "
 
+#: src/main.cpp:47
 msgid "Warning: pkexec not found. Privileged operations may not work."
-msgstr "Предупреждение: pkexec не найден. Привилегированные операции могут не работать."
+msgstr ""
+"Предупреждение: pkexec не найден. Привилегированные операции могут не "
+"работать."
 
+#: src/gui/i18n_strings.cpp:14
 msgid "Iruka-xbps Package Manager"
 msgstr "Менеджер пакетов Iruka-xbps"
 
+#: src/gui/i18n_strings.cpp:15
 msgid "Iruka-xbps"
 msgstr "Iruka-xbps"
 
+#: src/gui/main_window_ui.cpp:70
 msgid "View"
 msgstr "Вид"
 
+#: src/gui/main_window_ui.cpp:73
 msgid "All packages"
 msgstr "Все пакеты"
 
+#: src/gui/main_window_ui.cpp:77
 msgid "Installed only"
 msgstr "Только установленные"
 
+#: src/gui/main_window_ui.cpp:81
 msgid "Not installed"
 msgstr "Не установленные"
 
+#: src/gui/main_window_ui.cpp:87
 msgid "Show details panel"
 msgstr "Показать панель сведений"
 
+#: src/gui/main_window_ui.cpp:96 src/gui/main_window_ui.cpp:398
 msgid "Transaction"
 msgstr "Транзакция"
 
+#: src/gui/main_window_ui.cpp:99
 msgid "Sync databases"
 msgstr "Синхронизировать базы данных"
 
+#: src/gui/main_window_ui.cpp:103
 msgid "System upgrade"
 msgstr "Обновить систему"
 
+#: src/gui/main_window_ui.cpp:109 src/gui/main_window_ui.cpp:221
 msgid "Apply"
 msgstr "Применить"
 
+#: src/gui/main_window_ui.cpp:113
 msgid "Clear transaction"
 msgstr "Очистить транзакцию"
 
+#: src/gui/main_window_ui.cpp:121
 msgid "Options"
 msgstr "Параметры"
 
+#: src/gui/main_window_ui.cpp:124 src/gui/repository_editor.cpp:63
 msgid "Repositories"
 msgstr "Репозитории"
 
+#: src/gui/main_window_ui.cpp:130
 msgid "Language"
 msgstr "Язык"
 
+#: src/gui/main_window_ui.cpp:133
 msgid "System (default)"
 msgstr "Система (по умолчанию)"
 
+#: src/gui/main_window_ui.cpp:139
+msgid "English"
+msgstr ""
+
+#: src/gui/main_window_ui.cpp:145
 msgid "Español"
 msgstr "Español"
 
+#: src/gui/main_window_ui.cpp:151
 msgid "Русский"
 msgstr "Русский"
 
+#: src/gui/main_window_ui.cpp:188
 msgid "Help"
 msgstr "Справка"
 
+#: src/gui/main_window_ui.cpp:191
 msgid "About"
 msgstr "О программе"
 
+#: src/gui/main_window_ui.cpp:209
 msgid "Sync"
 msgstr "Синхронизация"
 
+#: src/gui/main_window_ui.cpp:210
 msgid "Synchronize package databases"
 msgstr "Синхронизировать базы данных пакетов"
 
+#: src/gui/main_window_ui.cpp:213
 msgid "Update"
 msgstr "Обновить"
 
+#: src/gui/main_window_ui.cpp:214
 msgid "Upgrade all system packages"
 msgstr "Обновить все системные пакеты"
 
+#: src/gui/main_window_ui.cpp:217
 msgid "Refresh"
 msgstr "Перезагрузить"
 
+#: src/gui/main_window_ui.cpp:218
 msgid "Refresh package list"
 msgstr "Перезагрузить список пакетов"
 
+#: src/gui/main_window_ui.cpp:222
 msgid "Apply pending transaction"
 msgstr "Применить ожидающую транзакцию"
 
+#: src/gui/main_window_ui.cpp:274
 msgid "Name"
 msgstr "Имя"
 
+#: src/gui/main_window_ui.cpp:282
 msgid "Version"
 msgstr "Версия"
 
-msgid "Size"
-msgstr "Размер"
-
+#: src/gui/main_window_ui.cpp:290
 msgid "Description"
 msgstr "Описание"
 
+#: src/gui/main_window_ui.cpp:309
 msgid "Install"
 msgstr "Установить"
 
+#: src/gui/main_window_ui.cpp:313
 msgid "Remove"
 msgstr "Удалить"
 
+#: src/gui/main_window_ui.cpp:343
 msgid "Info"
 msgstr "Информация"
 
+#: src/gui/main_window_ui.cpp:358
 msgid "Files"
 msgstr "Файлы"
 
+#: src/gui/main_window_ui.cpp:376
+msgid "Size"
+msgstr "Размер"
+
+#: src/gui/main_window_ui.cpp:384
 msgid "Op"
 msgstr "Оп"
 
+#: src/gui/main_window_ui.cpp:386
 msgid "Package"
 msgstr "Пакет"
 
+#: src/gui/main_window_ui.cpp:440
 msgid "Show details"
 msgstr "Показать подробности"
 
+#: src/gui/main_window_ui.cpp:459 src/gui/main_window_exec.cpp:33
+#: src/gui/repository_editor.cpp:150
 msgid "Cancel"
 msgstr "Отмена"
 
+#: src/gui/main_window_actions.cpp:46
 msgid "Syncing package databases..."
 msgstr "Синхронизация баз данных пакетов..."
 
+#: src/gui/main_window_actions.cpp:54
 msgid "Upgrading system..."
 msgstr "Обновление системы..."
 
+#: src/gui/main_window_actions.cpp:65
 msgid "Please select a package to install."
 msgstr "Выберите пакет для установки."
 
+#: src/gui/main_window_actions.cpp:79
 msgid "Package is already installed."
 msgstr "Пакет уже установлен."
 
+#: src/gui/main_window_actions.cpp:94
 msgid "Please select a package to remove."
 msgstr "Выберите пакет для удаления."
 
+#: src/gui/main_window_actions.cpp:108
 msgid "Package is not installed."
 msgstr "Пакет не установлен."
 
+#: src/gui/main_window_actions.cpp:116
+#, c-format
 msgid "Cannot remove protected package: %s"
 msgstr "Невозможно удалить защищённый пакет: %s"
 
-msgid "A graphical package manager for XBPS.\nBuilt with GTK3."
-msgstr "Графический менеджер пакетов для XBPS.\nСоздан на GTK3."
+#: src/gui/main_window_actions.cpp:145
+msgid ""
+"A graphical package manager for XBPS.\n"
+"Built with GTK3."
+msgstr ""
+"Графический менеджер пакетов для XBPS.\n"
+"Создан на GTK3."
 
-msgid "GUI: WTFPL\nCore/backend: BSD 3-Clause\n\nCopyright (C) 2026 JavierC"
-msgstr "GUI: WTFPL\nCore/backend: BSD 3-Clause\n\nCopyright (C) 2026 JavierC"
+#: src/gui/main_window_actions.cpp:151
+msgid ""
+"GUI: WTFPL\n"
+"Core/backend: BSD 3-Clause\n"
+"\n"
+"Copyright (C) 2026 JavierC"
+msgstr ""
+"GUI: WTFPL\n"
+"Core/backend: BSD 3-Clause\n"
+"\n"
+"Copyright (C) 2026 JavierC"
 
+#: src/gui/main_window_actions.cpp:165
 msgid "Cannot change the language while an operation is running."
 msgstr "Невозможно сменить язык, пока выполняется операция."
 
+#: src/gui/main_window_packages.cpp:153
+#, c-format
 msgid "Packages: %d"
 msgstr "Пакеты: %d"
 
+#: src/gui/main_window_packages.cpp:155
+#, c-format
 msgid "Installed: %d"
 msgstr "Установлено: %d"
 
+#: src/gui/main_window_packages.cpp:157
+#, c-format
 msgid "Outdated: %d"
 msgstr "Устаревших: %d"
 
+#: src/gui/main_window_packages.cpp:220 src/gui/main_window_packages.cpp:270
 msgid "Name:"
 msgstr "Имя:"
 
+#: src/gui/main_window_packages.cpp:221
 msgid "Version:"
 msgstr "Версия:"
 
+#: src/gui/main_window_packages.cpp:222 src/gui/repository_editor.cpp:166
 msgid "Repository:"
 msgstr "Репозиторий:"
 
+#: src/gui/main_window_packages.cpp:223
 msgid "Description:"
 msgstr "Описание:"
 
+#: src/gui/main_window_packages.cpp:243
 msgid "--- Package Details ---"
 msgstr "--- Сведения о пакете ---"
 
+#: src/gui/main_window_packages.cpp:244 src/gui/main_window_packages.cpp:258
 msgid "Homepage:"
 msgstr "Домашняя страница:"
 
+#: src/gui/main_window_packages.cpp:245 src/gui/main_window_packages.cpp:259
 msgid "License:"
 msgstr "Лицензия:"
 
+#: src/gui/main_window_packages.cpp:246 src/gui/main_window_packages.cpp:260
 msgid "Maintainer:"
 msgstr "Сопровождающий:"
 
+#: src/gui/main_window_packages.cpp:247 src/gui/main_window_packages.cpp:261
 msgid "Arch:"
 msgstr "Архитектура:"
 
+#: src/gui/main_window_packages.cpp:248
 msgid "Build Date:"
 msgstr "Дата сборки:"
 
+#: src/gui/main_window_packages.cpp:249
 msgid "Install Date:"
 msgstr "Дата установки:"
 
-msgid "DL Size:"
-msgstr "Размер загрузки:"
-
-msgid "Inst Size:"
-msgstr "Размер установки:"
-
+#: src/gui/main_window_packages.cpp:250 src/gui/main_window_packages.cpp:262
 msgid "Depends On:"
 msgstr "Зависит от:"
 
+#: src/gui/main_window_packages.cpp:251 src/gui/main_window_packages.cpp:263
 msgid "Opt Deps:"
 msgstr "Опциональные зависимости:"
 
+#: src/gui/main_window_packages.cpp:252
 msgid "Required By:"
 msgstr "Требуется для:"
 
+#: src/gui/main_window_packages.cpp:253 src/gui/main_window_packages.cpp:264
 msgid "Conflicts:"
 msgstr "Конфликты:"
 
+#: src/gui/main_window_packages.cpp:254
 msgid "Replaces:"
 msgstr "Заменяет:"
 
+#: src/gui/main_window_packages.cpp:255
 msgid "Options:"
 msgstr "Параметры:"
 
+#: src/gui/main_window_packages.cpp:257
 msgid "--- Remote Package Details ---"
 msgstr "--- Сведения об удалённом пакете ---"
 
+#: src/gui/main_window_packages.cpp:271
+#, fuzzy
+msgid "Download Size:"
+msgstr "Размер загрузки:"
+
+#: src/gui/main_window_packages.cpp:272
+#, fuzzy
+msgid "Installed Size:"
+msgstr "Размер установки:"
+
+#: src/gui/main_window_transaction.cpp:66
 msgid "No pending transactions."
 msgstr "Нет ожидающих транзакций."
 
+#. Build the confirmation message listing all packages to be processed.
+#: src/gui/main_window_transaction.cpp:73
 msgid "Execute transaction?"
 msgstr "Выполнить транзакцию?"
 
+#: src/gui/main_window_transaction.cpp:75
 msgid "Install: "
 msgstr "Установить: "
 
+#: src/gui/main_window_transaction.cpp:80
 msgid "Remove: "
 msgstr "Удалить: "
 
+#: src/gui/main_window_transaction.cpp:88 src/gui/main_window_exec.cpp:70
 msgid "OK"
 msgstr "ОК"
 
+#: src/gui/main_window_transaction.cpp:100
 msgid "Installing packages..."
 msgstr "Установка пакетов..."
 
+#: src/gui/main_window_transaction.cpp:105
 msgid "Removing packages..."
 msgstr "Удаление пакетов..."
 
-msgid "=== %s ===\n\n"
-msgstr "=== %s ===\n\n"
+#: src/gui/main_window_exec.cpp:55
+#, c-format
+msgid ""
+"=== %s ===\n"
+"\n"
+msgstr ""
+"=== %s ===\n"
+"\n"
 
+#: src/gui/main_window_exec.cpp:138
 msgid "Error: pipe() failed\n"
 msgstr "Ошибка: сбой pipe()\n"
 
+#: src/gui/repository_editor.cpp:78 src/gui/repository_editor.cpp:148
 msgid "Add repository"
 msgstr "Добавить репозиторий"
 
+#: src/gui/repository_editor.cpp:83
 msgid "Delete selected repository"
 msgstr "Удалить выбранный репозиторий"
 
+#: src/gui/repository_editor.cpp:87
 msgid "Save"
 msgstr "Сохранить"
 
+#: src/gui/repository_editor.cpp:88
 msgid "Save repositories (requires root)"
 msgstr "Сохранить репозитории (требуются права root)"
 
+#: src/gui/repository_editor.cpp:151
 msgid "Add"
 msgstr "Добавить"
 
+#: src/gui/repository_editor.cpp:164
 msgid "File name:"
 msgstr "Имя файла:"
 
+#: src/gui/repository_editor.cpp:187
+#, c-format
 msgid "A file named '%s' already exists."
 msgstr "Файл с именем «%s» уже существует."
 
+#: src/gui/repository_editor.cpp:197
 msgid "The repository URL cannot be empty."
 msgstr "URL репозитория не может быть пустым."
 
-msgid "Delete repository '%s'?\n\nThis will run: rm -f /etc/xbps.d/%s"
-msgstr "Удалить репозиторий «%s»?\n\nБудет выполнено: rm -f /etc/xbps.d/%s"
+#: src/gui/repository_editor.cpp:216
+#, c-format
+msgid ""
+"Delete repository '%s'?\n"
+"\n"
+"This will run: rm -f /etc/xbps.d/%s"
+msgstr ""
+"Удалить репозиторий «%s»?\n"
+"\n"
+"Будет выполнено: rm -f /etc/xbps.d/%s"
 
+#: src/gui/repository_editor.cpp:218
 msgid "Delete"
 msgstr "Удалить"
 
+#: src/gui/repository_editor.cpp:257
 msgid "Failed to delete repository."
 msgstr "Не удалось удалить репозиторий."
 
+#: src/gui/repository_editor.cpp:269
 msgid "No repositories to save."
 msgstr "Нет репозиториев для сохранения."
 
+#: src/gui/repository_editor.cpp:324
 msgid "Repositories saved successfully."
 msgstr "Репозитории успешно сохранены."
 
+#: src/gui/repository_editor.cpp:326
 msgid "Failed to save repositories."
 msgstr "Не удалось сохранить репозитории."

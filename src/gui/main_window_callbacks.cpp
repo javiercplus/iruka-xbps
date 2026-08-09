@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------
 
 #include "main_window_private.h"
+#include "settings.h"
 
 // ============================================================================
 // g_idle_add bridge callbacks
@@ -30,7 +31,7 @@ gboolean info_done_cb(gpointer data) {
     auto *r = static_cast<InfoResult*>(data);
     // Skip if the window was destroyed while the thread was running.
     if (!r->win->isDestroyed()) {
-        r->win->applyPackageInfo(r->generation, r->infoText, r->filesText);
+        r->win->applyPackageInfo(r->generation, r->infoText, r->filesText, r->sizeText);
     }
     delete r;
     return G_SOURCE_REMOVE;
@@ -172,6 +173,15 @@ gboolean MainWindow::cb_search_debounce(gpointer d) {
     return G_SOURCE_REMOVE;
 }
 
+// Fires when the selection debounce expires; loads info/files/size for the
+// currently selected package.
+gboolean MainWindow::cb_size_debounce(gpointer d) {
+    auto *win = static_cast<MainWindow*>(d);
+    win->m_sizeDebounceId = 0;
+    win->onSelectionDebounced();
+    return G_SOURCE_REMOVE;
+}
+
 // ============================================================================
 // Package table callbacks
 // ============================================================================
@@ -237,4 +247,18 @@ void MainWindow::cb_progress_btn(GtkWidget*, gpointer d) {
 
 void MainWindow::cb_toggle_details(GtkCheckMenuItem*, gpointer d) {
     static_cast<MainWindow*>(d)->toggleDetails();
+}
+
+// ============================================================================
+// Tree-view column resize callback
+// ============================================================================
+
+// Persists the user-adjusted column widths whenever the user drags a column
+// separator. The values are written to disk by Settings::save() on exit.
+void MainWindow::cb_col_width_changed(GtkTreeViewColumn*, GParamSpec*, gpointer d) {
+    auto *win = static_cast<MainWindow*>(d);
+    Settings::instance().setColumnWidths(
+        win->m_colName    ? gtk_tree_view_column_get_width(win->m_colName)    : 250,
+        win->m_colVersion ? gtk_tree_view_column_get_width(win->m_colVersion) : 120,
+        Settings::instance().sizeColumnWidth());
 }

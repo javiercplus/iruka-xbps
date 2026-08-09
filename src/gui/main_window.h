@@ -47,7 +47,8 @@ public:
   void applyLoadedPackages(std::vector<PackageListData> &&packages,
                            std::set<std::string> &&unreqSet,
                            std::map<std::string, OutdatedPackageInfo> &&outdated);
-  void applyPackageInfo(int generation, const std::string &infoText, const std::string &filesText);
+  void applyPackageInfo(int generation, const std::string &infoText,
+                        const std::string &filesText, const std::string &sizeText);
   void applyExecResult();
   void appendProgressOutput(const std::string &text);
 
@@ -67,6 +68,7 @@ private:
 
   void populateTable();
   void refreshStatusBar();
+  void onSelectionDebounced();
   void showPackageInfo(int row);
   void setPackageStatus(const std::string &pkgName, const std::string &status);
   void addToTransaction(const std::string &pkgName, bool install);
@@ -99,6 +101,7 @@ private:
   static void cb_search(GtkWidget *w, gpointer d);
   static void cb_search_changed(GtkWidget *w, gpointer d);
   static gboolean cb_search_debounce(gpointer d);
+  static gboolean cb_size_debounce(gpointer d);
   static void cb_table_select(GtkTreeSelection *sel, gpointer d);
   static void cb_row_activated(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *col, gpointer d);
   static gboolean cb_tree_button_press(GtkWidget *tv, GdkEventButton *event, gpointer d);
@@ -106,6 +109,7 @@ private:
   static gboolean cb_progress_delete(GtkWidget *w, GdkEvent *event, gpointer d);
   static void cb_progress_btn(GtkWidget *w, gpointer d);
   static void cb_toggle_details(GtkCheckMenuItem *item, gpointer d);
+  static void cb_col_width_changed(GtkTreeViewColumn *col, GParamSpec *pspec, gpointer d);
 
   // --- Widgets ---
   GtkWidget *m_window;
@@ -122,6 +126,10 @@ private:
   GtkListStore *m_listStore;
   GtkTreeSelection *m_selection;
 
+  // Package table columns (kept to persist user-adjusted widths).
+  GtkTreeViewColumn *m_colName = nullptr;
+  GtkTreeViewColumn *m_colVersion = nullptr;
+
   GtkWidget *m_notebook;
   GtkWidget *m_mainPaned;
   int m_lastPanedPosition = 0;
@@ -130,6 +138,8 @@ private:
   GtkTextBuffer *m_infoBuffer;
   GtkWidget *m_filesView;
   GtkTextBuffer *m_filesBuffer;
+  GtkWidget *m_sizeView;
+  GtkTextBuffer *m_sizeBuffer;
   GtkWidget *m_transTree;
   GtkListStore *m_transStore;
 
@@ -174,6 +184,10 @@ private:
 
   // Search debounce
   guint m_searchDebounceId = 0;
+
+  // Selection debounce for the Size notebook tab (avoids stale lookups when
+  // the user rapidly selects several rows).
+  guint m_sizeDebounceId = 0;
 
   // Stale async package-info guard
   int m_infoGeneration = 0;

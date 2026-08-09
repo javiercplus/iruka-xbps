@@ -34,26 +34,43 @@ void MainWindow::buildUi() {
     buildStatusBar();
     buildProgressDialog();
 
+    // All rows share the same horizontal margin (8px) so the menu bar, search
+    // row, package list and status bar are perfectly aligned on the left and
+    // right edges (visible when the window is maximized or fullscreen).
+    gtk_widget_set_margin_start(m_menuBar, 8);
+    gtk_widget_set_margin_end(m_menuBar, 8);
     gtk_box_pack_start(GTK_BOX(vbox), m_menuBar, FALSE, FALSE, 0);
 
     // Top row: search bar on the left, toolbar buttons on the right.
     GtkWidget *topRow = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+    gtk_widget_set_margin_start(topRow, 8);
+    gtk_widget_set_margin_end(topRow, 8);
     gtk_box_pack_start(GTK_BOX(vbox), topRow, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(topRow), m_searchBar, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(topRow), m_toolbar, FALSE, FALSE, 0);
 
     // Vertical pane: package list on top, details notebook on bottom.
     m_mainPaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+    gtk_widget_set_margin_start(m_mainPaned, 8);
+    gtk_widget_set_margin_end(m_mainPaned, 8);
+    gtk_widget_set_margin_bottom(m_mainPaned, 4);
 
     GtkWidget *listScroll = gtk_scrolled_window_new(nullptr, nullptr);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(listScroll),
         GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    // No border/shadow, matching the notebook tabs below, so the list visually
+    // aligns with the search bar and menu bar edges.
+    gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(listScroll), GTK_SHADOW_NONE);
     gtk_container_add(GTK_CONTAINER(listScroll), m_treeView);
 
     gtk_paned_pack1(GTK_PANED(m_mainPaned), listScroll, TRUE, TRUE);
     gtk_paned_pack2(GTK_PANED(m_mainPaned), m_notebook, TRUE, TRUE);
     gtk_box_pack_start(GTK_BOX(vbox), m_mainPaned, TRUE, TRUE, 0);
 
+    gtk_widget_set_margin_start(m_statusbar, 8);
+    gtk_widget_set_margin_end(m_statusbar, 8);
+    gtk_widget_set_margin_top(m_statusbar, 2);
+    gtk_widget_set_margin_bottom(m_statusbar, 4);
     gtk_box_pack_start(GTK_BOX(vbox), m_statusbar, FALSE, FALSE, 0);
 }
 
@@ -135,6 +152,12 @@ void MainWindow::buildMenuBar() {
     g_signal_connect(langSystem, "activate", G_CALLBACK(cb_menu_language), this);
     gtk_menu_shell_append(GTK_MENU_SHELL(langMenu), langSystem);
 
+    GtkWidget *langEn = gtk_radio_menu_item_new_with_label(
+        gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(langSystem)), _("English"));
+    g_object_set_data_full(G_OBJECT(langEn), "lang", g_strdup("en"), g_free);
+    g_signal_connect(langEn, "activate", G_CALLBACK(cb_menu_language), this);
+    gtk_menu_shell_append(GTK_MENU_SHELL(langMenu), langEn);
+
     GtkWidget *langEs = gtk_radio_menu_item_new_with_label(
         gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(langSystem)), _("Español"));
     g_object_set_data_full(G_OBJECT(langEs), "lang", g_strdup("es"), g_free);
@@ -152,19 +175,23 @@ void MainWindow::buildMenuBar() {
     // cb_menu_language and causing a boot loop on startup/reload.
     const std::string &uiLang = Settings::instance().uiLanguage();
     g_signal_handlers_block_by_func(langSystem, (gpointer)G_CALLBACK(cb_menu_language), this);
+    g_signal_handlers_block_by_func(langEn, (gpointer)G_CALLBACK(cb_menu_language), this);
     g_signal_handlers_block_by_func(langEs, (gpointer)G_CALLBACK(cb_menu_language), this);
     g_signal_handlers_block_by_func(langRu, (gpointer)G_CALLBACK(cb_menu_language), this);
-    
-    if (uiLang == "es") {
+
+    if (uiLang == "en") {
+        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langEn), TRUE);
+    } else if (uiLang == "es") {
         gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langEs), TRUE);
     } else if (uiLang == "ru") {
         gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langRu), TRUE);
     } else {
         gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langSystem), TRUE);
     }
-    
+
     // Unblock signals after setting the initial state.
     g_signal_handlers_unblock_by_func(langSystem, (gpointer)G_CALLBACK(cb_menu_language), this);
+    g_signal_handlers_unblock_by_func(langEn, (gpointer)G_CALLBACK(cb_menu_language), this);
     g_signal_handlers_unblock_by_func(langEs, (gpointer)G_CALLBACK(cb_menu_language), this);
     g_signal_handlers_unblock_by_func(langRu, (gpointer)G_CALLBACK(cb_menu_language), this);
 
@@ -244,7 +271,6 @@ void MainWindow::buildPackageTable() {
         G_TYPE_STRING,  // COL_STATUS
         G_TYPE_STRING,  // COL_NAME
         G_TYPE_STRING,  // COL_VERSION
-        G_TYPE_STRING,  // COL_SIZE
         G_TYPE_STRING,  // COL_DESCRIPTION
         G_TYPE_POINTER  // COL_PKG_PTR
     );
@@ -264,20 +290,22 @@ void MainWindow::buildPackageTable() {
     GtkTreeViewColumn *colName = gtk_tree_view_column_new_with_attributes(
         _("Name"), renderer, "text", COL_NAME, nullptr);
     gtk_tree_view_column_set_min_width(colName, Settings::instance().nameColumnWidth());
+    gtk_tree_view_column_set_resizable(colName, TRUE);
+    g_signal_connect(colName, "notify::width", G_CALLBACK(cb_col_width_changed), this);
+    m_colName = colName;
     gtk_tree_view_append_column(GTK_TREE_VIEW(m_treeView), colName);
 
     GtkTreeViewColumn *colVersion = gtk_tree_view_column_new_with_attributes(
         _("Version"), renderer, "text", COL_VERSION, nullptr);
     gtk_tree_view_column_set_min_width(colVersion, Settings::instance().versionColumnWidth());
+    gtk_tree_view_column_set_resizable(colVersion, TRUE);
+    g_signal_connect(colVersion, "notify::width", G_CALLBACK(cb_col_width_changed), this);
+    m_colVersion = colVersion;
     gtk_tree_view_append_column(GTK_TREE_VIEW(m_treeView), colVersion);
-
-    GtkTreeViewColumn *colSize = gtk_tree_view_column_new_with_attributes(
-        _("Size"), renderer, "text", COL_SIZE, nullptr);
-    gtk_tree_view_column_set_min_width(colSize, Settings::instance().sizeColumnWidth());
-    gtk_tree_view_append_column(GTK_TREE_VIEW(m_treeView), colSize);
 
     GtkTreeViewColumn *colDesc = gtk_tree_view_column_new_with_attributes(
         _("Description"), renderer, "text", COL_DESCRIPTION, nullptr);
+    gtk_tree_view_column_set_resizable(colDesc, TRUE);
     gtk_tree_view_append_column(GTK_TREE_VIEW(m_treeView), colDesc);
 
     gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(m_treeView), TRUE);
@@ -345,6 +373,24 @@ void MainWindow::buildInfoPanel() {
     gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(filesScroll), GTK_SHADOW_NONE);
     gtk_container_add(GTK_CONTAINER(filesScroll), m_filesView);
     gtk_notebook_append_page(GTK_NOTEBOOK(m_notebook), filesScroll, gtk_label_new(_("Files")));
+
+    // --- Size tab ---
+    // Shows the sizes of the currently selected package only (filled by the
+    // debounced selection handler; see onTableSelect / showPackageInfo).
+    m_sizeBuffer = gtk_text_buffer_new(nullptr);
+    m_sizeView   = gtk_text_view_new_with_buffer(m_sizeBuffer);
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(m_sizeView), FALSE);
+    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(m_sizeView), GTK_WRAP_WORD);
+    gtk_text_view_set_top_margin(GTK_TEXT_VIEW(m_sizeView), 8);
+    gtk_text_view_set_bottom_margin(GTK_TEXT_VIEW(m_sizeView), 8);
+    gtk_text_view_set_left_margin(GTK_TEXT_VIEW(m_sizeView), 10);
+    gtk_text_view_set_right_margin(GTK_TEXT_VIEW(m_sizeView), 10);
+    GtkWidget *sizeScroll = gtk_scrolled_window_new(nullptr, nullptr);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sizeScroll),
+        GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sizeScroll), GTK_SHADOW_NONE);
+    gtk_container_add(GTK_CONTAINER(sizeScroll), m_sizeView);
+    gtk_notebook_append_page(GTK_NOTEBOOK(m_notebook), sizeScroll, gtk_label_new(_("Size")));
 
     // --- Transaction tab ---
     m_transStore = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);

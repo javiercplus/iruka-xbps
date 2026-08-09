@@ -24,7 +24,6 @@ enum {
     COL_STATUS = 0,  // Status indicator character: ' ', '@', '!', 'I', 'X'
     COL_NAME,        // Package name string
     COL_VERSION,     // Package version string
-    COL_SIZE,        // Installed size as human-readable string
     COL_DESCRIPTION, // Short package description
     COL_PKG_PTR,     // Raw PackageRepository::PackageData* pointer (G_TYPE_POINTER)
     COL_COUNT        // Total number of columns (sentinel)
@@ -52,6 +51,7 @@ struct InfoResult {
     int          generation; // Matches MainWindow::m_infoGeneration to discard stale results
     std::string  infoText;
     std::string  filesText;
+    std::string  sizeText;   // Size information shown in the Size notebook tab
 };
 
 // Signals that a privileged command (install/remove/sync) has finished.

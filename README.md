@@ -14,7 +14,7 @@ A graphical front-end for the XBPS package manager, written in C++ using GTK 3.
 - Transaction queue to batch installation and removal operations.
 - Polkit integration via pkexec for system repository synchronization and package modifications.
 - Repository configuration editor.
-- Multilingual interface (Spanish and Russian) with an in-app language switcher.
+- Multilingual interface (English, Spanish and Russian) with an in-app language switcher.
 
 ## Prerequisites
 

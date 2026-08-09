@@ -117,11 +117,6 @@ void MainWindow::populateTable() {
         GtkTreeIter iter;
         gtk_list_store_append(m_listStore, &iter);
 
-        // Format the installed size as a human-readable string (empty if unknown).
-        std::string sizeStr;
-        if (pkg->installedSize > 0)
-            sizeStr = Package::kbytesToSize(pkg->installedSize);
-
         // Determine the status indicator character:
         // 'X' = queued for removal, 'I' = queued for install,
         // '!' = outdated, '@' = installed, ' ' = not installed.
@@ -136,7 +131,6 @@ void MainWindow::populateTable() {
             COL_STATUS,      status.c_str(),
             COL_NAME,        pkg->name.c_str(),
             COL_VERSION,     pkg->version.c_str(),
-            COL_SIZE,        sizeStr.c_str(),
             COL_DESCRIPTION, pkg->description.c_str(),
             COL_PKG_PTR,     (gpointer)pkg,
             -1);
@@ -186,8 +180,22 @@ void MainWindow::onSearch() {
     refreshStatusBar();
 }
 
-// Called when the selected row changes; triggers async package info loading.
+// Called when the selected row changes. Debounces the heavy info/size fetch so
+// that rapidly selecting several rows only triggers one lookup, and clears the
+// Size tab so it never shows stale data from a previous selection.
 void MainWindow::onTableSelect() {
+    gtk_text_buffer_set_text(m_sizeBuffer, "", -1);
+
+    if (m_sizeDebounceId) {
+        g_source_remove(m_sizeDebounceId);
+        m_sizeDebounceId = 0;
+    }
+    m_sizeDebounceId = g_timeout_add(250, cb_size_debounce, this);
+}
+
+// Fires after the selection debounce elapses; fetches info/files/size for the
+// currently selected package.
+void MainWindow::onSelectionDebounced() {
     GtkTreeIter  iter;
     GtkTreeModel *model = GTK_TREE_MODEL(m_listStore);
     if (!gtk_tree_selection_get_selected(m_selection, &model, &iter)) return;
@@ -239,8 +247,6 @@ void MainWindow::showPackageInfo(int row) {
             ss << _("Arch:")         << "   " << info.arch                 << "\n";
             ss << _("Build Date:")   << "   " << info.buildDate            << "\n";
             ss << _("Install Date:") << "   " << info.installDate          << "\n";
-            ss << _("DL Size:")      << "   " << info.downloadSizeAsString << "\n";
-            ss << _("Inst Size:")    << "   " << info.installedSizeAsString<< "\n";
             ss << "\n" << _("Depends On:") << "   " << info.dependsOn      << "\n";
             ss << _("Opt Deps:")     << "   " << info.optDepends           << "\n";
             ss << _("Required By:")  << "   " << info.requiredBy           << "\n";
@@ -253,13 +259,18 @@ void MainWindow::showPackageInfo(int row) {
             ss << _("License:")      << "   " << info.license              << "\n";
             ss << _("Maintainer:")   << "   " << info.maintainer           << "\n";
             ss << _("Arch:")         << "   " << info.arch                 << "\n";
-            ss << _("DL Size:")      << "   " << info.downloadSizeAsString << "\n";
-            ss << _("Inst Size:")    << "   " << info.installedSizeAsString<< "\n";
             ss << "\n" << _("Depends On:") << "   " << info.dependsOn       << "\n";
             ss << _("Opt Deps:")     << "   " << info.optDepends           << "\n";
             ss << _("Conflicts:")    << "   " << info.conflictsWith        << "\n";
         }
         result->infoText += ss.str();
+
+        // Size tab: installed size (installed packages) and download size.
+        std::ostringstream sizeSs;
+        sizeSs << _("Name:")           << " " << pkgName                     << "\n";
+        sizeSs << _("Download Size:")  << "   " << info.downloadSizeAsString << "\n";
+        sizeSs << _("Installed Size:") << "   " << info.installedSizeAsString<< "\n";
+        result->sizeText = sizeSs.str();
 
         auto files = XBPSCommand::getPackageFiles(pkgName, installed);
         std::ostringstream fss;
@@ -270,11 +281,13 @@ void MainWindow::showPackageInfo(int row) {
     }).detach();
 }
 
-// Called on the main thread to update the info/files buffers with fetched data.
+// Called on the main thread to update the info/files/size buffers with fetched data.
 void MainWindow::applyPackageInfo(int generation, const std::string &infoText,
-                                  const std::string &filesText) {
+                                  const std::string &filesText,
+                                  const std::string &sizeText) {
     // Discard stale results from a previous selection that arrived late.
     if (generation != m_infoGeneration) return;
     gtk_text_buffer_set_text(m_infoBuffer,  infoText.c_str(),  -1);
     gtk_text_buffer_set_text(m_filesBuffer, filesText.c_str(), -1);
+    gtk_text_buffer_set_text(m_sizeBuffer,  sizeText.c_str(),  -1);
 }
