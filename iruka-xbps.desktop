@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Iruka-xbps
+GenericName=Package Manager
+Comment=A graphical package manager for XBPS
+Exec=iruka-xbps
+Icon=iruka
+Terminal=false
+Categories=System;Utility;
+Keywords=package;manager;xbps;void;

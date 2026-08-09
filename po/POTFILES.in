@@ -1,0 +1,10 @@
+# List of source files containing translatable strings (paths relative to the
+# project source root). Used by xgettext via `ninja iruka-xbps-pot`.
+src/main.cpp
+src/gui/i18n_strings.cpp
+src/gui/main_window_ui.cpp
+src/gui/main_window_actions.cpp
+src/gui/main_window_packages.cpp
+src/gui/main_window_transaction.cpp
+src/gui/main_window_exec.cpp
+src/gui/repository_editor.cpp

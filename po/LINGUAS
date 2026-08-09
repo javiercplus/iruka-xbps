@@ -1,0 +1,7 @@
+# Translation catalogs for iruka-xbps.
+#
+# This file is read by the i18n.gettext() meson target: every language listed
+# here expects a <lang>.po file in this directory.
+
+es
+ru

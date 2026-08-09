@@ -1,0 +1,307 @@
+# Russian translation of iruka-xbps.
+# Copyright (C) 2026 iruka-xbps contributors
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: iruka-xbps 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-08 00:00+0000\n"
+"PO-Revision-Date: 2026-08-08 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Russian <ru@li.org>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Error: xbps-query not found at "
+msgstr "Ошибка: xbps-query не найден по пути "
+
+msgid "Warning: pkexec not found. Privileged operations may not work."
+msgstr "Предупреждение: pkexec не найден. Привилегированные операции могут не работать."
+
+msgid "Iruka-xbps Package Manager"
+msgstr "Менеджер пакетов Iruka-xbps"
+
+msgid "Iruka-xbps"
+msgstr "Iruka-xbps"
+
+msgid "View"
+msgstr "Вид"
+
+msgid "All packages"
+msgstr "Все пакеты"
+
+msgid "Installed only"
+msgstr "Только установленные"
+
+msgid "Not installed"
+msgstr "Не установленные"
+
+msgid "Show details panel"
+msgstr "Показать панель сведений"
+
+msgid "Transaction"
+msgstr "Транзакция"
+
+msgid "Sync databases"
+msgstr "Синхронизировать базы данных"
+
+msgid "System upgrade"
+msgstr "Обновить систему"
+
+msgid "Apply"
+msgstr "Применить"
+
+msgid "Clear transaction"
+msgstr "Очистить транзакцию"
+
+msgid "Options"
+msgstr "Параметры"
+
+msgid "Repositories"
+msgstr "Репозитории"
+
+msgid "Language"
+msgstr "Язык"
+
+msgid "System (default)"
+msgstr "Система (по умолчанию)"
+
+msgid "Español"
+msgstr "Español"
+
+msgid "Русский"
+msgstr "Русский"
+
+msgid "Help"
+msgstr "Справка"
+
+msgid "About"
+msgstr "О программе"
+
+msgid "Sync"
+msgstr "Синхронизация"
+
+msgid "Synchronize package databases"
+msgstr "Синхронизировать базы данных пакетов"
+
+msgid "Update"
+msgstr "Обновить"
+
+msgid "Upgrade all system packages"
+msgstr "Обновить все системные пакеты"
+
+msgid "Refresh"
+msgstr "Перезагрузить"
+
+msgid "Refresh package list"
+msgstr "Перезагрузить список пакетов"
+
+msgid "Apply pending transaction"
+msgstr "Применить ожидающую транзакцию"
+
+msgid "Name"
+msgstr "Имя"
+
+msgid "Version"
+msgstr "Версия"
+
+msgid "Size"
+msgstr "Размер"
+
+msgid "Description"
+msgstr "Описание"
+
+msgid "Install"
+msgstr "Установить"
+
+msgid "Remove"
+msgstr "Удалить"
+
+msgid "Info"
+msgstr "Информация"
+
+msgid "Files"
+msgstr "Файлы"
+
+msgid "Op"
+msgstr "Оп"
+
+msgid "Package"
+msgstr "Пакет"
+
+msgid "Show details"
+msgstr "Показать подробности"
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Syncing package databases..."
+msgstr "Синхронизация баз данных пакетов..."
+
+msgid "Upgrading system..."
+msgstr "Обновление системы..."
+
+msgid "Please select a package to install."
+msgstr "Выберите пакет для установки."
+
+msgid "Package is already installed."
+msgstr "Пакет уже установлен."
+
+msgid "Please select a package to remove."
+msgstr "Выберите пакет для удаления."
+
+msgid "Package is not installed."
+msgstr "Пакет не установлен."
+
+msgid "Cannot remove protected package: %s"
+msgstr "Невозможно удалить защищённый пакет: %s"
+
+msgid "A graphical package manager for XBPS.\nBuilt with GTK3."
+msgstr "Графический менеджер пакетов для XBPS.\nСоздан на GTK3."
+
+msgid "GUI: WTFPL\nCore/backend: BSD 3-Clause\n\nCopyright (C) 2026 JavierC"
+msgstr "GUI: WTFPL\nCore/backend: BSD 3-Clause\n\nCopyright (C) 2026 JavierC"
+
+msgid "Cannot change the language while an operation is running."
+msgstr "Невозможно сменить язык, пока выполняется операция."
+
+msgid "Packages: %d"
+msgstr "Пакеты: %d"
+
+msgid "Installed: %d"
+msgstr "Установлено: %d"
+
+msgid "Outdated: %d"
+msgstr "Устаревших: %d"
+
+msgid "Name:"
+msgstr "Имя:"
+
+msgid "Version:"
+msgstr "Версия:"
+
+msgid "Repository:"
+msgstr "Репозиторий:"
+
+msgid "Description:"
+msgstr "Описание:"
+
+msgid "--- Package Details ---"
+msgstr "--- Сведения о пакете ---"
+
+msgid "Homepage:"
+msgstr "Домашняя страница:"
+
+msgid "License:"
+msgstr "Лицензия:"
+
+msgid "Maintainer:"
+msgstr "Сопровождающий:"
+
+msgid "Arch:"
+msgstr "Архитектура:"
+
+msgid "Build Date:"
+msgstr "Дата сборки:"
+
+msgid "Install Date:"
+msgstr "Дата установки:"
+
+msgid "DL Size:"
+msgstr "Размер загрузки:"
+
+msgid "Inst Size:"
+msgstr "Размер установки:"
+
+msgid "Depends On:"
+msgstr "Зависит от:"
+
+msgid "Opt Deps:"
+msgstr "Опциональные зависимости:"
+
+msgid "Required By:"
+msgstr "Требуется для:"
+
+msgid "Conflicts:"
+msgstr "Конфликты:"
+
+msgid "Replaces:"
+msgstr "Заменяет:"
+
+msgid "Options:"
+msgstr "Параметры:"
+
+msgid "--- Remote Package Details ---"
+msgstr "--- Сведения об удалённом пакете ---"
+
+msgid "No pending transactions."
+msgstr "Нет ожидающих транзакций."
+
+msgid "Execute transaction?"
+msgstr "Выполнить транзакцию?"
+
+msgid "Install: "
+msgstr "Установить: "
+
+msgid "Remove: "
+msgstr "Удалить: "
+
+msgid "OK"
+msgstr "ОК"
+
+msgid "Installing packages..."
+msgstr "Установка пакетов..."
+
+msgid "Removing packages..."
+msgstr "Удаление пакетов..."
+
+msgid "=== %s ===\n\n"
+msgstr "=== %s ===\n\n"
+
+msgid "Error: pipe() failed\n"
+msgstr "Ошибка: сбой pipe()\n"
+
+msgid "Add repository"
+msgstr "Добавить репозиторий"
+
+msgid "Delete selected repository"
+msgstr "Удалить выбранный репозиторий"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Save repositories (requires root)"
+msgstr "Сохранить репозитории (требуются права root)"
+
+msgid "Add"
+msgstr "Добавить"
+
+msgid "File name:"
+msgstr "Имя файла:"
+
+msgid "A file named '%s' already exists."
+msgstr "Файл с именем «%s» уже существует."
+
+msgid "The repository URL cannot be empty."
+msgstr "URL репозитория не может быть пустым."
+
+msgid "Delete repository '%s'?\n\nThis will run: rm -f /etc/xbps.d/%s"
+msgstr "Удалить репозиторий «%s»?\n\nБудет выполнено: rm -f /etc/xbps.d/%s"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Failed to delete repository."
+msgstr "Не удалось удалить репозиторий."
+
+msgid "No repositories to save."
+msgstr "Нет репозиториев для сохранения."
+
+msgid "Repositories saved successfully."
+msgstr "Репозитории успешно сохранены."
+
+msgid "Failed to save repositories."
+msgstr "Не удалось сохранить репозитории."

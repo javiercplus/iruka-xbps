@@ -1,0 +1,307 @@
+# Spanish translation of iruka-xbps.
+# Copyright (C) 2026 iruka-xbps contributors
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: iruka-xbps 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-08 00:00+0000\n"
+"PO-Revision-Date: 2026-08-08 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Spanish <es@li.org>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Error: xbps-query not found at "
+msgstr "Error: xbps-query no encontrado en "
+
+msgid "Warning: pkexec not found. Privileged operations may not work."
+msgstr "Advertencia: no se encontró pkexec. Es posible que las operaciones privilegiadas no funcionen."
+
+msgid "Iruka-xbps Package Manager"
+msgstr "Gestor de paquetes Iruka-xbps"
+
+msgid "Iruka-xbps"
+msgstr "Iruka-xbps"
+
+msgid "View"
+msgstr "Ver"
+
+msgid "All packages"
+msgstr "Todos los paquetes"
+
+msgid "Installed only"
+msgstr "Solo instalados"
+
+msgid "Not installed"
+msgstr "No instalados"
+
+msgid "Show details panel"
+msgstr "Mostrar panel de detalles"
+
+msgid "Transaction"
+msgstr "Transacción"
+
+msgid "Sync databases"
+msgstr "Sincronizar bases de datos"
+
+msgid "System upgrade"
+msgstr "Actualizar el sistema"
+
+msgid "Apply"
+msgstr "Aplicar"
+
+msgid "Clear transaction"
+msgstr "Limpiar transacción"
+
+msgid "Options"
+msgstr "Opciones"
+
+msgid "Repositories"
+msgstr "Repositorios"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "System (default)"
+msgstr "Sistema (predeterminado)"
+
+msgid "Español"
+msgstr "Español"
+
+msgid "Русский"
+msgstr "Русский"
+
+msgid "Help"
+msgstr "Ayuda"
+
+msgid "About"
+msgstr "Acerca de"
+
+msgid "Sync"
+msgstr "Sincronizar"
+
+msgid "Synchronize package databases"
+msgstr "Sincronizar las bases de datos de paquetes"
+
+msgid "Update"
+msgstr "Actualizar"
+
+msgid "Upgrade all system packages"
+msgstr "Actualizar todos los paquetes del sistema"
+
+msgid "Refresh"
+msgstr "Recargar"
+
+msgid "Refresh package list"
+msgstr "Recargar la lista de paquetes"
+
+msgid "Apply pending transaction"
+msgstr "Aplicar la transacción pendiente"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Version"
+msgstr "Versión"
+
+msgid "Size"
+msgstr "Tamaño"
+
+msgid "Description"
+msgstr "Descripción"
+
+msgid "Install"
+msgstr "Instalar"
+
+msgid "Remove"
+msgstr "Eliminar"
+
+msgid "Info"
+msgstr "Información"
+
+msgid "Files"
+msgstr "Archivos"
+
+msgid "Op"
+msgstr "Op"
+
+msgid "Package"
+msgstr "Paquete"
+
+msgid "Show details"
+msgstr "Mostrar detalles"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Syncing package databases..."
+msgstr "Sincronizando bases de datos de paquetes..."
+
+msgid "Upgrading system..."
+msgstr "Actualizando el sistema..."
+
+msgid "Please select a package to install."
+msgstr "Seleccione un paquete para instalar."
+
+msgid "Package is already installed."
+msgstr "El paquete ya está instalado."
+
+msgid "Please select a package to remove."
+msgstr "Seleccione un paquete para eliminar."
+
+msgid "Package is not installed."
+msgstr "El paquete no está instalado."
+
+msgid "Cannot remove protected package: %s"
+msgstr "No se puede eliminar el paquete protegido: %s"
+
+msgid "A graphical package manager for XBPS.\nBuilt with GTK3."
+msgstr "Un gestor de paquetes gráfico para XBPS.\nConstruido con GTK3."
+
+msgid "GUI: WTFPL\nCore/backend: BSD 3-Clause\n\nCopyright (C) 2026 JavierC"
+msgstr "GUI: WTFPL\nCore/backend: BSD 3-Clause\n\nCopyright (C) 2026 JavierC"
+
+msgid "Cannot change the language while an operation is running."
+msgstr "No se puede cambiar el idioma mientras se está ejecutando una operación."
+
+msgid "Packages: %d"
+msgstr "Paquetes: %d"
+
+msgid "Installed: %d"
+msgstr "Instalados: %d"
+
+msgid "Outdated: %d"
+msgstr "Desactualizados: %d"
+
+msgid "Name:"
+msgstr "Nombre:"
+
+msgid "Version:"
+msgstr "Versión:"
+
+msgid "Repository:"
+msgstr "Repositorio:"
+
+msgid "Description:"
+msgstr "Descripción:"
+
+msgid "--- Package Details ---"
+msgstr "--- Detalles del paquete ---"
+
+msgid "Homepage:"
+msgstr "Página web:"
+
+msgid "License:"
+msgstr "Licencia:"
+
+msgid "Maintainer:"
+msgstr "Mantenedor:"
+
+msgid "Arch:"
+msgstr "Arquitectura:"
+
+msgid "Build Date:"
+msgstr "Fecha de compilación:"
+
+msgid "Install Date:"
+msgstr "Fecha de instalación:"
+
+msgid "DL Size:"
+msgstr "Tamaño de descarga:"
+
+msgid "Inst Size:"
+msgstr "Tamaño instalado:"
+
+msgid "Depends On:"
+msgstr "Depende de:"
+
+msgid "Opt Deps:"
+msgstr "Dependencias opcionales:"
+
+msgid "Required By:"
+msgstr "Requerido por:"
+
+msgid "Conflicts:"
+msgstr "Conflictos:"
+
+msgid "Replaces:"
+msgstr "Reemplaza:"
+
+msgid "Options:"
+msgstr "Opciones:"
+
+msgid "--- Remote Package Details ---"
+msgstr "--- Detalles del paquete remoto ---"
+
+msgid "No pending transactions."
+msgstr "No hay transacciones pendientes."
+
+msgid "Execute transaction?"
+msgstr "¿Ejecutar la transacción?"
+
+msgid "Install: "
+msgstr "Instalar: "
+
+msgid "Remove: "
+msgstr "Eliminar: "
+
+msgid "OK"
+msgstr "Aceptar"
+
+msgid "Installing packages..."
+msgstr "Instalando paquetes..."
+
+msgid "Removing packages..."
+msgstr "Eliminando paquetes..."
+
+msgid "=== %s ===\n\n"
+msgstr "=== %s ===\n\n"
+
+msgid "Error: pipe() failed\n"
+msgstr "Error: fallo de pipe()\n"
+
+msgid "Add repository"
+msgstr "Añadir repositorio"
+
+msgid "Delete selected repository"
+msgstr "Eliminar el repositorio seleccionado"
+
+msgid "Save"
+msgstr "Guardar"
+
+msgid "Save repositories (requires root)"
+msgstr "Guardar repositorios (requiere root)"
+
+msgid "Add"
+msgstr "Añadir"
+
+msgid "File name:"
+msgstr "Nombre de archivo:"
+
+msgid "A file named '%s' already exists."
+msgstr "Ya existe un archivo llamado '%s'."
+
+msgid "The repository URL cannot be empty."
+msgstr "La URL del repositorio no puede estar vacía."
+
+msgid "Delete repository '%s'?\n\nThis will run: rm -f /etc/xbps.d/%s"
+msgstr "¿Eliminar el repositorio '%s'?\n\nSe ejecutará: rm -f /etc/xbps.d/%s"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "Failed to delete repository."
+msgstr "No se pudo eliminar el repositorio."
+
+msgid "No repositories to save."
+msgstr "No hay repositorios para guardar."
+
+msgid "Repositories saved successfully."
+msgstr "Repositorios guardados correctamente."
+
+msgid "Failed to save repositories."
+msgstr "No se pudieron guardar los repositorios."
