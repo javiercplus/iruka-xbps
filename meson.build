@@ -20,6 +20,7 @@ gui_inc = include_directories('src/gui')
 sources = files(
   'src/main.cpp',
   'src/gui/i18n_strings.cpp',
+  'src/gui/logo.cpp',
   'src/core/package.cpp',
   'src/core/xbps_command.cpp',
   'src/core/package_repository.cpp',

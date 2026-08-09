@@ -22,6 +22,7 @@
 #include "package_model.h"
 #include "constants.h"
 #include "utils.h"
+#include "logo.h"
 #include "i18n.h"
 #include <mutex>
 
@@ -131,7 +132,15 @@ void MainWindow::do_about() {
     GtkWidget *dialog = gtk_about_dialog_new();
     gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), IRUKA_APP_NAME);
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), IRUKA_APP_VERSION);
-    gtk_about_dialog_set_logo_icon_name(GTK_ABOUT_DIALOG(dialog), "iruka");
+
+    // Use the logo embedded in the binary so the dialog works even without an
+    // installed icon theme.
+    GdkPixbuf *logo = logo_pixbuf();
+    if (logo) {
+        gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), logo);
+        g_object_unref(logo);
+    }
+
     gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog),
         _("A graphical package manager for XBPS.\nBuilt with GTK3."));
 
