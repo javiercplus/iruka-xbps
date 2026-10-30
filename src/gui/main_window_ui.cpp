@@ -170,12 +170,18 @@ void MainWindow::buildMenuBar() {
     g_object_set_data_full(G_OBJECT(langJa), "lang", g_strdup("ja"), g_free);
     g_signal_connect(langJa, "activate", G_CALLBACK(cb_menu_language), this);
     gtk_menu_shell_append(GTK_MENU_SHELL(langMenu), langJa);
-
+   
     GtkWidget *langHu = gtk_radio_menu_item_new_with_label(
         gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(langSystem)), _("Magyar"));
     g_object_set_data_full(G_OBJECT(langHu), "lang", g_strdup("hu"), g_free);
     g_signal_connect(langHu, "activate", G_CALLBACK(cb_menu_language), this);
     gtk_menu_shell_append(GTK_MENU_SHELL(langMenu), langHu);
+    
+    GtkWidget *langIt = gtk_radio_menu_item_new_with_label(
+        gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(langSystem)), _("Italiano"));
+    g_object_set_data_full(G_OBJECT(langIt), "lang", g_strdup("it"), g_free);
+    g_signal_connect(langIt, "activate", G_CALLBACK(cb_menu_language), this);
+    gtk_menu_shell_append(GTK_MENU_SHELL(langMenu), langIt);
 
     const std::string &uiLang = Settings::instance().uiLanguage();
     g_signal_handlers_block_by_func(langSystem, (gpointer)G_CALLBACK(cb_menu_language), this);
@@ -184,6 +190,7 @@ void MainWindow::buildMenuBar() {
     g_signal_handlers_block_by_func(langRu, (gpointer)G_CALLBACK(cb_menu_language), this);
     g_signal_handlers_block_by_func(langJa, (gpointer)G_CALLBACK(cb_menu_language), this);
     g_signal_handlers_block_by_func(langHu, (gpointer)G_CALLBACK(cb_menu_language), this);
+    g_signal_handlers_block_by_func(langIt, (gpointer)G_CALLBACK(cb_menu_language), this);
 
     if (uiLang == "en") {
         gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langEn), TRUE);
@@ -195,6 +202,8 @@ void MainWindow::buildMenuBar() {
         gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langJa), TRUE);
     } else if (uiLang == "hu") {
         gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langHu), TRUE);
+    } else if (uiLang == "it") {
+        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langIt), TRUE);
     } else {
         gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langSystem), TRUE);
     }
@@ -205,6 +214,7 @@ void MainWindow::buildMenuBar() {
     g_signal_handlers_unblock_by_func(langRu, (gpointer)G_CALLBACK(cb_menu_language), this);
     g_signal_handlers_unblock_by_func(langJa, (gpointer)G_CALLBACK(cb_menu_language), this);
     g_signal_handlers_unblock_by_func(langHu, (gpointer)G_CALLBACK(cb_menu_language), this);
+    g_signal_handlers_unblock_by_func(langIt, (gpointer)G_CALLBACK(cb_menu_language), this);
 
     gtk_menu_shell_append(GTK_MENU_SHELL(optMenu), gtk_separator_menu_item_new());
     gtk_menu_shell_append(GTK_MENU_SHELL(optMenu), langItem);
