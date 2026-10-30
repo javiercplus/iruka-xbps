@@ -162,6 +162,10 @@ msgstr "Giapponese"
 msgid "Magyar"
 msgstr "Ungherese"
 
+#: src/gui/main_window_ui.cpp:181
+msgid "Italian"
+msgstr "Italiano"
+
 #: src/gui/main_window_ui.cpp:215
 msgid "Help"
 msgstr "Aiuto"
