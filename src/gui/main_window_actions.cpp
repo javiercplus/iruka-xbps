@@ -1,4 +1,3 @@
-
 #include "main_window_private.h"
 #include "package.h"
 #include "settings.h"
@@ -8,7 +7,35 @@
 #include "utils.h"
 #include "logo.h"
 #include "i18n.h"
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Image.H>
+#include <FL/Fl_Browser.H>
+#include <FL/fl_ask.H>
+#include <cstdlib>
 #include <mutex>
+
+namespace {
+
+class LogoBox : public Fl_Box {
+public:
+    LogoBox(int X, int Y, int W, int H) : Fl_Box(X, Y, W, H) {}
+    ~LogoBox() override { delete m_owned; }
+    void setOwned(Fl_Image *img) {
+        m_owned = img;
+        image(img);
+    }
+private:
+    Fl_Image *m_owned = nullptr;
+};
+
+void about_close(Fl_Widget *w, void *) {
+    Fl::delete_widget(w->window());
+}
+
+}
 
 void MainWindow::setView(ViewOption v) {
     Settings::instance().setViewOption(v);
@@ -22,15 +49,8 @@ void MainWindow::setView(ViewOption v) {
             case ViewOption::Outdated:     index = 3; break;
             default:                       index = 0; break;
         }
-        GtkListBoxRow *row = gtk_list_box_get_row_at_index(
-            GTK_LIST_BOX(m_categoryList), index);
-        if (row) {
-            g_signal_handlers_block_by_func(m_categoryList,
-                (gpointer)G_CALLBACK(cb_category_selected), this);
-            gtk_list_box_select_row(GTK_LIST_BOX(m_categoryList), row);
-            g_signal_handlers_unblock_by_func(m_categoryList,
-                (gpointer)G_CALLBACK(cb_category_selected), this);
-        }
+        m_selectedCategoryIndex = index;
+        m_categoryList->value(index + 1);
     }
 
     applyFilters();
@@ -50,65 +70,50 @@ void MainWindow::do_upgrade() {
     runCommandQueue();
 }
 
-void MainWindow::do_install() {
-    GtkTreeIter  iter;
-    GtkTreeModel *model = GTK_TREE_MODEL(m_listStore);
-    if (!gtk_tree_selection_get_selected(m_selection, &model, &iter)) {
-        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(m_window),
-            GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
-            _("Please select a package to install."));
-        g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), nullptr);
-        gtk_widget_show(dialog);
+void MainWindow::do_update_package() {
+    if (m_transactionRunning) return;
+
+    auto *pkg = selectedPackage();
+    if (!pkg) {
+        fl_message("%s", _("Please select a package to update."));
+        return;
+    }
+    if (!pkg->installed()) {
+        fl_message("%s", _("Package is not installed."));
         return;
     }
 
-    gpointer ptr = nullptr;
-    gtk_tree_model_get(model, &iter, COL_PKG_PTR, &ptr, -1);
-    if (!ptr) return;
+    m_commandQueue.clear();
+    m_commandQueue.push_back({{ XBPS_INSTALL_BIN, "-Syu", pkg->name },
+                              _("Updating package...")});
+    runCommandQueue();
+}
 
-    auto *pkg = static_cast<PackageRepository::PackageData*>(ptr);
+void MainWindow::do_install() {
+    auto *pkg = selectedPackage();
+    if (!pkg) {
+        fl_message("%s", _("Please select a package to install."));
+        return;
+    }
     if (pkg->installed()) {
-        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(m_window),
-            GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
-            _("Package is already installed."));
-        g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), nullptr);
-        gtk_widget_show(dialog);
+        fl_message("%s", _("Package is already installed."));
         return;
     }
     addToTransaction(pkg->name, true);
 }
 
 void MainWindow::do_remove() {
-    GtkTreeIter  iter;
-    GtkTreeModel *model = GTK_TREE_MODEL(m_listStore);
-    if (!gtk_tree_selection_get_selected(m_selection, &model, &iter)) {
-        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(m_window),
-            GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
-            _("Please select a package to remove."));
-        g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), nullptr);
-        gtk_widget_show(dialog);
+    auto *pkg = selectedPackage();
+    if (!pkg) {
+        fl_message("%s", _("Please select a package to remove."));
         return;
     }
-
-    gpointer ptr = nullptr;
-    gtk_tree_model_get(model, &iter, COL_PKG_PTR, &ptr, -1);
-    if (!ptr) return;
-
-    auto *pkg = static_cast<PackageRepository::PackageData*>(ptr);
     if (!pkg->installed()) {
-        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(m_window),
-            GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
-            _("Package is not installed."));
-        g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), nullptr);
-        gtk_widget_show(dialog);
+        fl_message("%s", _("Package is not installed."));
         return;
     }
     if (Package::isForbidden(pkg->name)) {
-        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(m_window),
-            GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK,
-            _("Cannot remove protected package: %s"), pkg->name.c_str());
-        g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), nullptr);
-        gtk_widget_show(dialog);
+        fl_alert(_("Cannot remove protected package: %s"), pkg->name.c_str());
         return;
     }
     addToTransaction(pkg->name, false);
@@ -120,37 +125,37 @@ void MainWindow::openRepositories() {
 }
 
 void MainWindow::do_about() {
-    GtkWidget *dialog = gtk_about_dialog_new();
-    gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), IRUKA_APP_NAME);
+    Fl_Window *dlg = new Fl_Window(400, 330, _("About"));
+    dlg->begin();
 
-    GdkPixbuf *logo = logo_pixbuf();
-    if (logo) {
-        gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), logo);
-        g_object_unref(logo);
-    }
+    LogoBox *logo = new LogoBox(160, 16, 80, 80);
+    Fl_Image *img = logo_image();
+    if (img) logo->setOwned(img);
 
-    gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog),
-        _("A graphical package manager for XBPS.\nBuilt with GTK3."));
+    std::string text = std::string(IRUKA_APP_NAME) + " " + IRUKA_APP_VERSION;
+    text += "\n\n";
+    text += _("A graphical package manager for XBPS.\nBuilt with FLTK.");
+    text += "\n\n";
+    text += _("Authors:") + std::string(" JavierC");
+    text += "\n\n";
+    text += _("GUI: WTFPL\nCore/backend: BSD 3-Clause\n\n"
+             "Copyright (C) 2026 JavierC");
 
-    const char *authors[] = { "JavierC", nullptr };
-    gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(dialog), authors);
+    Fl_Box *info = new Fl_Box(20, 108, 360, 160, "");
+    info->copy_label(text.c_str());
+    info->align(FL_ALIGN_TOP | FL_ALIGN_INSIDE | FL_ALIGN_WRAP);
 
-    gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(dialog),
-        _("GUI: WTFPL\nCore/backend: BSD 3-Clause\n\n"
-          "Copyright (C) 2026 JavierC"));
-    gtk_about_dialog_set_license_type(GTK_ABOUT_DIALOG(dialog), GTK_LICENSE_CUSTOM);
+    Fl_Button *close = new Fl_Button(160, 284, 80, 28, _("Close"));
+    close->callback(about_close, nullptr);
 
-    g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), nullptr);
-    gtk_widget_show(dialog);
+    dlg->end();
+    dlg->callback(about_close, nullptr);
+    dlg->show();
 }
 
 void MainWindow::setLanguage(const std::string &lang) {
     if (m_transactionRunning) {
-        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(m_window),
-            GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
-            "%s", _("Cannot change the language while an operation is running."));
-        g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), nullptr);
-        gtk_widget_show(dialog);
+        fl_message("%s", _("Cannot change the language while an operation is running."));
         return;
     }
 
@@ -168,5 +173,5 @@ void MainWindow::setLanguage(const std::string &lang) {
 
     auto *data = new ReloadData();
     data->win = this;
-    g_idle_add(reload_ui_cb, data);
+    Fl::awake(reload_ui_awake, data);
 }

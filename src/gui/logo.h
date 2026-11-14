@@ -1,8 +1,8 @@
 #ifndef IRUKA_LOGO_H
 #define IRUKA_LOGO_H
 
-#include <gtk/gtk.h>
+#include <FL/Fl_Image.H>
 
-GdkPixbuf *logo_pixbuf();
+Fl_Image *logo_image();
 
 #endif

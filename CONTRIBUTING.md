@@ -9,7 +9,7 @@ Thank you for your interest in contributing to iruka-xbps. Please review the fol
   a non-obvious invariant needs explaining.
 - Avoid using public classes for UI-internal details; keep implementation details scoped to private headers (e.g., `main_window_private.h`).
 - Handle inputs and type conversions securely. For example, wrap string conversions in exception handlers (like `try/catch` around `std::stoi`).
-- Ensure thread safety when bridging background operations back to the main GTK thread. Always use `g_idle_add` with proper validation checks (e.g., ensuring widgets have not been destroyed).
+- Ensure thread safety when bridging background operations back to the main FLTK thread. Always use `Fl::awake()` with proper validation checks (e.g., ensuring widgets have not been destroyed).
 - Use modern C++ memory management (prefer smart pointers or container ownership rather than raw manual allocation where possible).
 
 ## Development Workflow

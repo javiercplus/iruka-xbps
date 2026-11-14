@@ -1,7 +1,6 @@
 #ifndef IRUKA_MAIN_WINDOW_H
 #define IRUKA_MAIN_WINDOW_H
 
-#include <gtk/gtk.h>
 #include <thread>
 #include <mutex>
 #include <atomic>
@@ -14,6 +13,21 @@
 #include "package_model.h"
 #include "constants.h"
 
+#include <FL/Fl_Widget.H>
+
+class Fl_Window;
+class Fl_Menu_Bar;
+class Fl_Button;
+class Fl_Input;
+class Fl_Tabs;
+class Fl_Box;
+class Fl_Progress;
+class Fl_Browser;
+class Fl_Hold_Browser;
+class Fl_Text_Display;
+class Fl_Text_Buffer;
+class Fl_Menu_Button;
+class PackageBrowser;
 class RepositoryEditor;
 
 class MainWindow {
@@ -27,6 +41,7 @@ public:
 
   void do_sync();
   void do_upgrade();
+  void do_update_package();
   void do_install();
   void do_remove();
   void do_about();
@@ -49,6 +64,10 @@ public:
 
   bool isDestroyed() const { return m_destroyed.load(); }
 
+  void layout();
+  void openContextMenu();
+  void toggleDetails();
+
 private:
   void buildUi();
   void buildMenuBar();
@@ -56,11 +75,12 @@ private:
   void buildSearchBar();
   void buildPackageTable();
   void buildCategoryPanel();
-  GtkListBoxRow *addCategoryRow(const std::string &label, int kind,
-                                const std::string &repo);
+  void addCategoryRow(const std::string &label, int kind,
+                      const std::string &repo);
   void buildInfoPanel();
   void buildStatusBar();
   void buildPopupMenu();
+  void buildProgressDialog();
 
   void populateTable();
   void refreshStatusBar();
@@ -71,83 +91,82 @@ private:
   void setPackageStatus(const std::string &pkgName, const std::string &status);
   void addToTransaction(const std::string &pkgName, bool install);
   void do_unmark();
+  PackageRepository::PackageData *selectedPackage();
   void execWithPrivileges(const std::vector<std::string> &args);
   void runCommandQueue();
   void startNextCommand();
   void finishRun();
   void setTransactionRunning(bool running);
-  void buildProgressDialog();
   void onCancelProgress();
-  void toggleDetails();
+  void onProgressToggle();
 
-  static void cb_menu_all(GtkWidget *w, gpointer d);
-  static void cb_menu_installed(GtkWidget *w, gpointer d);
-  static void cb_menu_notinstalled(GtkWidget *w, gpointer d);
-  static void cb_menu_sync(GtkWidget *w, gpointer d);
-  static void cb_menu_upgrade(GtkWidget *w, gpointer d);
-  static void cb_menu_commit(GtkWidget *w, gpointer d);
-  static void cb_menu_clear(GtkWidget *w, gpointer d);
-  static void cb_menu_about(GtkWidget *w, gpointer d);
-  static void cb_menu_repositories(GtkWidget *w, gpointer d);
-  static void cb_menu_language(GtkWidget *w, gpointer d);
-  static void cb_btn_upgrade(GtkWidget *w, gpointer d);
-  static void cb_btn_refresh(GtkWidget *w, gpointer d);
-  static void cb_btn_apply(GtkWidget *w, gpointer d);
-  static void cb_popup_install(GtkWidget *w, gpointer d);
-  static void cb_popup_remove(GtkWidget *w, gpointer d);
-  static void cb_popup_unmark(GtkWidget *w, gpointer d);
-  static void cb_category_selected(GtkListBox *box, GtkListBoxRow *row, gpointer d);
-  static void cb_search(GtkWidget *w, gpointer d);
-  static void cb_search_changed(GtkWidget *w, gpointer d);
-  static gboolean cb_search_debounce(gpointer d);
-  static gboolean cb_size_debounce(gpointer d);
-  static void cb_table_select(GtkTreeSelection *sel, gpointer d);
-  static void cb_row_activated(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *col, gpointer d);
-  static gboolean cb_tree_button_press(GtkWidget *tv, GdkEventButton *event, gpointer d);
-  static gboolean cb_progress_pulse(gpointer d);
-  static gboolean cb_progress_delete(GtkWidget *w, GdkEvent *event, gpointer d);
-  static void cb_progress_btn(GtkWidget *w, gpointer d);
-  static void cb_toggle_details(GtkCheckMenuItem *item, gpointer d);
-  static void cb_col_width_changed(GtkTreeViewColumn *col, GParamSpec *pspec, gpointer d);
+  static void cb_window_resize(Fl_Widget *w, void *d);
+  static void cb_menu_all(Fl_Widget *w, void *d);
+  static void cb_menu_installed(Fl_Widget *w, void *d);
+  static void cb_menu_notinstalled(Fl_Widget *w, void *d);
+  static void cb_menu_sync(Fl_Widget *w, void *d);
+  static void cb_menu_upgrade(Fl_Widget *w, void *d);
+  static void cb_menu_commit(Fl_Widget *w, void *d);
+  static void cb_menu_clear(Fl_Widget *w, void *d);
+  static void cb_menu_about(Fl_Widget *w, void *d);
+  static void cb_menu_repositories(Fl_Widget *w, void *d);
+  static void cb_menu_language_system(Fl_Widget *w, void *d);
+  static void cb_menu_language_en(Fl_Widget *w, void *d);
+  static void cb_menu_language_es(Fl_Widget *w, void *d);
+  static void cb_menu_language_ru(Fl_Widget *w, void *d);
+  static void cb_menu_language_ja(Fl_Widget *w, void *d);
+  static void cb_menu_language_hu(Fl_Widget *w, void *d);
+  static void cb_btn_upgrade(Fl_Widget *w, void *d);
+  static void cb_btn_refresh(Fl_Widget *w, void *d);
+  static void cb_btn_apply(Fl_Widget *w, void *d);
+  static void cb_popup_install(Fl_Widget *w, void *d);
+  static void cb_popup_update(Fl_Widget *w, void *d);
+  static void cb_popup_remove(Fl_Widget *w, void *d);
+  static void cb_popup_unmark(Fl_Widget *w, void *d);
+  static void cb_category_selected(Fl_Widget *w, void *d);
+  static void cb_search_changed(Fl_Widget *w, void *d);
+  static void cb_search_debounce(void *d);
+  static void cb_size_debounce(void *d);
+  static void cb_table_select(Fl_Widget *w, void *d);
+  static void cb_progress_pulse(void *d);
+  static void cb_progress_btn(Fl_Widget *w, void *d);
+  static void cb_progress_toggle(Fl_Widget *w, void *d);
+  static void cb_progress_close(Fl_Widget *w, void *d);
+  static void cb_toggle_details(Fl_Widget *w, void *d);
+  static void cb_window_close(Fl_Widget *w, void *d);
 
-  GtkWidget *m_window;
-  GtkWidget *m_menuBar;
-  GtkWidget *m_toolbar;
-  GtkWidget *m_searchBar;
-  GtkWidget *m_btnUpgrade;
-  GtkWidget *m_btnRefresh;
-  GtkWidget *m_btnApply;
-  GtkWidget *m_searchEntry;
+  Fl_Window *m_window;
+  Fl_Menu_Bar *m_menuBar;
+  Fl_Button *m_btnUpgrade;
+  Fl_Button *m_btnRefresh;
+  Fl_Button *m_btnApply;
+  Fl_Input *m_searchEntry;
 
-  GtkWidget *m_treeView;
-  GtkListStore *m_listStore;
-  GtkTreeSelection *m_selection;
+  PackageBrowser *m_pkgBrowser;
+  int m_pkgColWidths[4] = {0, 0, 0, 0};
 
-  GtkWidget *m_categoryList;
-  GtkWidget *m_categoryScroll;
-  GtkWidget *m_outerPaned;
+  Fl_Hold_Browser *m_categoryList;
+  struct CategoryRow {
+    int kind;
+    std::string value;
+  };
+  std::vector<CategoryRow> m_categoryRows;
+  int m_selectedCategoryIndex = 0;
   std::string m_selectedCategory;
+  bool m_detailsVisible = true;
 
-  GtkTreeViewColumn *m_colName = nullptr;
-  GtkTreeViewColumn *m_colVersion = nullptr;
+  Fl_Tabs *m_notebook;
+  Fl_Text_Display *m_infoView;
+  Fl_Text_Buffer *m_infoBuffer;
+  Fl_Text_Display *m_filesView;
+  Fl_Text_Buffer *m_filesBuffer;
+  Fl_Text_Display *m_sizeView;
+  Fl_Text_Buffer *m_sizeBuffer;
+  Fl_Browser *m_transList;
 
-  GtkWidget *m_notebook;
-  GtkWidget *m_mainPaned;
-  int m_lastPanedPosition = 0;
-  GtkWidget *m_viewDetailsItem;
-  GtkWidget *m_infoView;
-  GtkTextBuffer *m_infoBuffer;
-  GtkWidget *m_filesView;
-  GtkTextBuffer *m_filesBuffer;
-  GtkWidget *m_sizeView;
-  GtkTextBuffer *m_sizeBuffer;
-  GtkWidget *m_transTree;
-  GtkListStore *m_transStore;
+  Fl_Menu_Button *m_popupMenu;
 
-  GtkWidget *m_popupMenu;
-
-  GtkWidget *m_statusbar;
-  guint m_statusContextId;
+  Fl_Box *m_statusbar;
 
   RepositoryEditor *m_repoEditor = nullptr;
 
@@ -166,21 +185,18 @@ private:
   std::vector<ExecStep> m_commandQueue;
   bool m_transactionRunning = false;
 
-  GtkWidget *m_progressDialog = nullptr;
-  GtkWidget *m_progressLabel;
-  GtkWidget *m_progressBar;
-  GtkWidget *m_progressExpander;
-  GtkWidget *m_progressView;
-  GtkTextBuffer *m_progressBuffer;
-  GtkWidget *m_progressButton;
-  guint m_progressTimerId = 0;
+  Fl_Window *m_progressDialog = nullptr;
+  Fl_Box *m_progressLabel;
+  Fl_Progress *m_progressBar;
+  Fl_Button *m_progressToggle;
+  Fl_Text_Display *m_progressView;
+  Fl_Text_Buffer *m_progressBuffer;
+  Fl_Button *m_progressButton;
+  bool m_progressDetailsVisible = false;
+  double m_progressPulse = 0.0;
 
   std::atomic<int> m_activeChild{0};
   std::atomic<bool> m_cancelRequested{false};
-
-  guint m_searchDebounceId = 0;
-
-  guint m_sizeDebounceId = 0;
 
   int m_infoGeneration = 0;
 

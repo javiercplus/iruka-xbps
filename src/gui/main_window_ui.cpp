@@ -1,21 +1,35 @@
-
 #include "main_window_private.h"
 #include "settings.h"
 #include "constants.h"
 #include "category.h"
 #include "i18n.h"
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Menu_Bar.H>
+#include <FL/Fl_Menu_Item.H>
+#include <FL/Fl_Menu_Button.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Input.H>
+#include <FL/Fl_Browser.H>
+#include <FL/Fl_Hold_Browser.H>
+#include <FL/Fl_Tabs.H>
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Progress.H>
+#include <FL/Fl_Text_Display.H>
+#include <FL/Fl_Text_Buffer.H>
+#include <FL/fl_draw.H>
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif
 
 void MainWindow::buildUi() {
-    m_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(m_window), _(IRUKA_APP_TITLE));
-    gtk_window_set_default_size(GTK_WINDOW(m_window),
-        Settings::instance().windowWidth(),
-        Settings::instance().windowHeight());
-    g_signal_connect(m_window, "destroy", G_CALLBACK(gtk_main_quit), nullptr);
-
-    GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    gtk_container_add(GTK_CONTAINER(m_window), vbox);
+    m_window = new MainWindowFrame(Settings::instance().windowWidth(),
+                                   Settings::instance().windowHeight(),
+                                   _(IRUKA_APP_TITLE));
+    static_cast<MainWindowFrame *>(m_window)->owner = this;
+    m_window->callback(cb_window_close, this);
 
     buildMenuBar();
     buildToolbar();
@@ -26,329 +40,131 @@ void MainWindow::buildUi() {
     buildStatusBar();
     buildProgressDialog();
 
-    gtk_widget_set_margin_start(m_menuBar, 8);
-    gtk_widget_set_margin_end(m_menuBar, 8);
-    gtk_box_pack_start(GTK_BOX(vbox), m_menuBar, FALSE, FALSE, 0);
-
-    GtkWidget *topRow = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-    gtk_widget_set_margin_start(topRow, 8);
-    gtk_widget_set_margin_end(topRow, 8);
-    gtk_box_pack_start(GTK_BOX(vbox), topRow, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(topRow), m_searchBar, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(topRow), m_toolbar, FALSE, FALSE, 0);
-
-    m_mainPaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
-
-    GtkWidget *listScroll = gtk_scrolled_window_new(nullptr, nullptr);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(listScroll),
-        GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-    gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(listScroll), GTK_SHADOW_NONE);
-    gtk_container_add(GTK_CONTAINER(listScroll), m_treeView);
-
-    gtk_paned_pack1(GTK_PANED(m_mainPaned), listScroll, TRUE, TRUE);
-    gtk_paned_pack2(GTK_PANED(m_mainPaned), m_notebook, TRUE, TRUE);
-
-    m_outerPaned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
-    gtk_widget_set_margin_start(m_outerPaned, 8);
-    gtk_widget_set_margin_end(m_outerPaned, 8);
-    gtk_widget_set_margin_bottom(m_outerPaned, 4);
-    gtk_paned_pack1(GTK_PANED(m_outerPaned), m_categoryScroll, FALSE, FALSE);
-    gtk_paned_pack2(GTK_PANED(m_outerPaned), m_mainPaned, TRUE, TRUE);
-    gtk_box_pack_start(GTK_BOX(vbox), m_outerPaned, TRUE, TRUE, 0);
-
-    gtk_widget_set_margin_start(m_statusbar, 8);
-    gtk_widget_set_margin_end(m_statusbar, 8);
-    gtk_widget_set_margin_top(m_statusbar, 2);
-    gtk_widget_set_margin_bottom(m_statusbar, 4);
-    gtk_box_pack_start(GTK_BOX(vbox), m_statusbar, FALSE, FALSE, 0);
+    m_window->end();
+    layout();
 }
-
 
 void MainWindow::buildMenuBar() {
-    m_menuBar = gtk_menu_bar_new();
-
-    GtkWidget *viewMenu = gtk_menu_new();
-    GtkWidget *viewItem = gtk_menu_item_new_with_label(_("View"));
-    gtk_menu_item_set_submenu(GTK_MENU_ITEM(viewItem), viewMenu);
-
-    GtkWidget *allItem = gtk_menu_item_new_with_label(_("All packages"));
-    g_signal_connect(allItem, "activate", G_CALLBACK(cb_menu_all), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(viewMenu), allItem);
-
-    GtkWidget *instItem = gtk_menu_item_new_with_label(_("Installed only"));
-    g_signal_connect(instItem, "activate", G_CALLBACK(cb_menu_installed), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(viewMenu), instItem);
-
-    GtkWidget *notInstItem = gtk_menu_item_new_with_label(_("Not installed"));
-    g_signal_connect(notInstItem, "activate", G_CALLBACK(cb_menu_notinstalled), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(viewMenu), notInstItem);
-
-    gtk_menu_shell_append(GTK_MENU_SHELL(viewMenu), gtk_separator_menu_item_new());
-
-    m_viewDetailsItem = gtk_check_menu_item_new_with_label(_("Show details panel"));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(m_viewDetailsItem), TRUE);
-    g_signal_connect(m_viewDetailsItem, "toggled", G_CALLBACK(cb_toggle_details), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(viewMenu), m_viewDetailsItem);
-
-    gtk_menu_shell_append(GTK_MENU_SHELL(GTK_MENU_BAR(m_menuBar)), viewItem);
-
-    GtkWidget *txMenu = gtk_menu_new();
-    GtkWidget *txItem = gtk_menu_item_new_with_label(_("Packages"));
-    gtk_menu_item_set_submenu(GTK_MENU_ITEM(txItem), txMenu);
-
-    GtkWidget *markInstallItem = gtk_menu_item_new_with_label(_("Mark for install"));
-    g_signal_connect(markInstallItem, "activate", G_CALLBACK(cb_popup_install), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(txMenu), markInstallItem);
-
-    GtkWidget *markUninstallItem = gtk_menu_item_new_with_label(_("Mark for uninstall"));
-    g_signal_connect(markUninstallItem, "activate", G_CALLBACK(cb_popup_remove), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(txMenu), markUninstallItem);
-
-    GtkWidget *unmarkItem = gtk_menu_item_new_with_label(_("Unmark"));
-    g_signal_connect(unmarkItem, "activate", G_CALLBACK(cb_popup_unmark), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(txMenu), unmarkItem);
-
-    gtk_menu_shell_append(GTK_MENU_SHELL(txMenu), gtk_separator_menu_item_new());
-
-    GtkWidget *commitItem = gtk_menu_item_new_with_label(_("Apply"));
-    g_signal_connect(commitItem, "activate", G_CALLBACK(cb_menu_commit), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(txMenu), commitItem);
-
-    GtkWidget *clearItem = gtk_menu_item_new_with_label(_("Clear actions"));
-    g_signal_connect(clearItem, "activate", G_CALLBACK(cb_menu_clear), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(txMenu), clearItem);
-
-    gtk_menu_shell_append(GTK_MENU_SHELL(txMenu), gtk_separator_menu_item_new());
-
-    GtkWidget *syncItem = gtk_menu_item_new_with_label(_("Sync databases"));
-    g_signal_connect(syncItem, "activate", G_CALLBACK(cb_menu_sync), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(txMenu), syncItem);
-
-    GtkWidget *upItem = gtk_menu_item_new_with_label(_("System upgrade"));
-    g_signal_connect(upItem, "activate", G_CALLBACK(cb_menu_upgrade), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(txMenu), upItem);
-
-    gtk_menu_shell_append(GTK_MENU_SHELL(GTK_MENU_BAR(m_menuBar)), txItem);
-
-    GtkWidget *optMenu = gtk_menu_new();
-    GtkWidget *optItem = gtk_menu_item_new_with_label(_("Options"));
-    gtk_menu_item_set_submenu(GTK_MENU_ITEM(optItem), optMenu);
-
-    GtkWidget *reposItem = gtk_menu_item_new_with_label(_("Repositories"));
-    g_signal_connect(reposItem, "activate", G_CALLBACK(cb_menu_repositories), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(optMenu), reposItem);
-
-    GtkWidget *langMenu = gtk_menu_new();
-    GtkWidget *langItem = gtk_menu_item_new_with_label(_("Language"));
-    gtk_menu_item_set_submenu(GTK_MENU_ITEM(langItem), langMenu);
-
-    GtkWidget *langSystem = gtk_radio_menu_item_new_with_label(nullptr, _("System (default)"));
-    g_object_set_data_full(G_OBJECT(langSystem), "lang", g_strdup(""), g_free);
-    g_signal_connect(langSystem, "activate", G_CALLBACK(cb_menu_language), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(langMenu), langSystem);
-
-    GtkWidget *langEn = gtk_radio_menu_item_new_with_label(
-        gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(langSystem)), _("English"));
-    g_object_set_data_full(G_OBJECT(langEn), "lang", g_strdup("en"), g_free);
-    g_signal_connect(langEn, "activate", G_CALLBACK(cb_menu_language), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(langMenu), langEn);
-
-    GtkWidget *langEs = gtk_radio_menu_item_new_with_label(
-        gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(langSystem)), _("Español"));
-    g_object_set_data_full(G_OBJECT(langEs), "lang", g_strdup("es"), g_free);
-    g_signal_connect(langEs, "activate", G_CALLBACK(cb_menu_language), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(langMenu), langEs);
-
-    GtkWidget *langRu = gtk_radio_menu_item_new_with_label(
-        gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(langSystem)), _("Русский"));
-    g_object_set_data_full(G_OBJECT(langRu), "lang", g_strdup("ru"), g_free);
-    g_signal_connect(langRu, "activate", G_CALLBACK(cb_menu_language), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(langMenu), langRu);
-
-    GtkWidget *langJa = gtk_radio_menu_item_new_with_label(
-        gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(langSystem)), _("日本語"));
-    g_object_set_data_full(G_OBJECT(langJa), "lang", g_strdup("ja"), g_free);
-    g_signal_connect(langJa, "activate", G_CALLBACK(cb_menu_language), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(langMenu), langJa);
-
-    GtkWidget *langHu = gtk_radio_menu_item_new_with_label(
-        gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(langSystem)), _("Magyar"));
-    g_object_set_data_full(G_OBJECT(langHu), "lang", g_strdup("hu"), g_free);
-    g_signal_connect(langHu, "activate", G_CALLBACK(cb_menu_language), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(langMenu), langHu);
+    m_menuBar = new Fl_Menu_Bar(0, 0, 100, 28);
 
     const std::string &uiLang = Settings::instance().uiLanguage();
-    g_signal_handlers_block_by_func(langSystem, (gpointer)G_CALLBACK(cb_menu_language), this);
-    g_signal_handlers_block_by_func(langEn, (gpointer)G_CALLBACK(cb_menu_language), this);
-    g_signal_handlers_block_by_func(langEs, (gpointer)G_CALLBACK(cb_menu_language), this);
-    g_signal_handlers_block_by_func(langRu, (gpointer)G_CALLBACK(cb_menu_language), this);
-    g_signal_handlers_block_by_func(langJa, (gpointer)G_CALLBACK(cb_menu_language), this);
-    g_signal_handlers_block_by_func(langHu, (gpointer)G_CALLBACK(cb_menu_language), this);
 
-    if (uiLang == "en") {
-        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langEn), TRUE);
-    } else if (uiLang == "es") {
-        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langEs), TRUE);
-    } else if (uiLang == "ru") {
-        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langRu), TRUE);
-    } else if (uiLang == "ja") {
-        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langJa), TRUE);
-    } else if (uiLang == "hu") {
-        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langHu), TRUE);
-    } else {
-        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(langSystem), TRUE);
-    }
-
-    g_signal_handlers_unblock_by_func(langSystem, (gpointer)G_CALLBACK(cb_menu_language), this);
-    g_signal_handlers_unblock_by_func(langEn, (gpointer)G_CALLBACK(cb_menu_language), this);
-    g_signal_handlers_unblock_by_func(langEs, (gpointer)G_CALLBACK(cb_menu_language), this);
-    g_signal_handlers_unblock_by_func(langRu, (gpointer)G_CALLBACK(cb_menu_language), this);
-    g_signal_handlers_unblock_by_func(langJa, (gpointer)G_CALLBACK(cb_menu_language), this);
-    g_signal_handlers_unblock_by_func(langHu, (gpointer)G_CALLBACK(cb_menu_language), this);
-
-    gtk_menu_shell_append(GTK_MENU_SHELL(optMenu), gtk_separator_menu_item_new());
-    gtk_menu_shell_append(GTK_MENU_SHELL(optMenu), langItem);
-
-    gtk_menu_shell_append(GTK_MENU_SHELL(GTK_MENU_BAR(m_menuBar)), optItem);
-
-    GtkWidget *helpMenu = gtk_menu_new();
-    GtkWidget *helpItem = gtk_menu_item_new_with_label(_("Help"));
-    gtk_menu_item_set_submenu(GTK_MENU_ITEM(helpItem), helpMenu);
-
-    GtkWidget *aboutItem = gtk_menu_item_new_with_label(_("About"));
-    g_signal_connect(aboutItem, "activate", G_CALLBACK(cb_menu_about), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(helpMenu), aboutItem);
-
-    gtk_menu_shell_append(GTK_MENU_SHELL(GTK_MENU_BAR(m_menuBar)), helpItem);
-}
-
-
-void MainWindow::buildToolbar() {
-    m_toolbar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
-    gtk_widget_set_margin_top(m_toolbar, 4);
-    gtk_widget_set_margin_bottom(m_toolbar, 4);
-    gtk_widget_set_margin_start(m_toolbar, 8);
-
-    auto makeButton = [](const char *icon, const char *label,
-                         GCallback cb, gpointer data) -> GtkWidget* {
-        GtkWidget *btn = gtk_button_new();
-        GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
-        GtkWidget *img = gtk_image_new_from_icon_name(icon, GTK_ICON_SIZE_BUTTON);
-        GtkWidget *lbl = gtk_label_new(label);
-        gtk_box_pack_start(GTK_BOX(box), img, FALSE, FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(box), lbl, FALSE, FALSE, 0);
-        gtk_container_add(GTK_CONTAINER(btn), box);
-        g_signal_connect(btn, "clicked", cb, data);
-        return btn;
+    Fl_Menu_Item items[] = {
+        {_("View"), 0, 0, 0, FL_SUBMENU},
+            {_("All packages"), 0, cb_menu_all, this, 0},
+            {_("Installed only"), 0, cb_menu_installed, this, 0},
+            {_("Not installed"), 0, cb_menu_notinstalled, this, FL_MENU_DIVIDER},
+            {_("Show details panel"), 0, cb_toggle_details, this,
+                static_cast<int>(FL_MENU_TOGGLE |
+                    (m_detailsVisible ? FL_MENU_VALUE : 0))},
+            {0},
+        {_("Packages"), 0, 0, 0, FL_SUBMENU},
+            {_("Mark for install"), 0, cb_popup_install, this, 0},
+            {_("Mark for uninstall"), 0, cb_popup_remove, this, 0},
+            {_("Update package"), 0, cb_popup_update, this, 0},
+            {_("Unmark"), 0, cb_popup_unmark, this, FL_MENU_DIVIDER},
+            {_("Apply"), 0, cb_menu_commit, this, 0},
+            {_("Clear actions"), 0, cb_menu_clear, this, FL_MENU_DIVIDER},
+            {_("Sync databases"), 0, cb_menu_sync, this, 0},
+            {_("System upgrade"), 0, cb_menu_upgrade, this, 0},
+            {0},
+        {_("Options"), 0, 0, 0, FL_SUBMENU},
+            {_("Repositories"), 0, cb_menu_repositories, this, FL_MENU_DIVIDER},
+            {_("Language"), 0, 0, 0, FL_SUBMENU},
+                {_("System (default)"), 0, cb_menu_language_system, this,
+                    uiLang.empty() ? FL_MENU_RADIO | FL_MENU_VALUE : FL_MENU_RADIO},
+                {_("English"), 0, cb_menu_language_en, this,
+                    uiLang == "en" ? FL_MENU_RADIO | FL_MENU_VALUE : FL_MENU_RADIO},
+                {_("\xC3\x89spanol"), 0, cb_menu_language_es, this,
+                    uiLang == "es" ? FL_MENU_RADIO | FL_MENU_VALUE : FL_MENU_RADIO},
+                {_("\xD0\xA0\xD1\x83\xD1\x81\xD1\x81\xD0\xBA\xD0\xB8\xD0\xB9"), 0, cb_menu_language_ru, this,
+                    uiLang == "ru" ? FL_MENU_RADIO | FL_MENU_VALUE : FL_MENU_RADIO},
+                {_("\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E"), 0, cb_menu_language_ja, this,
+                    uiLang == "ja" ? FL_MENU_RADIO | FL_MENU_VALUE : FL_MENU_RADIO},
+                {_("Magyar"), 0, cb_menu_language_hu, this,
+                    uiLang == "hu" ? FL_MENU_RADIO | FL_MENU_VALUE : FL_MENU_RADIO},
+                {0},
+            {0},
+        {_("Help"), 0, 0, 0, FL_SUBMENU},
+            {_("About"), 0, cb_menu_about, this, 0},
+            {0},
+        {0}
     };
 
-    m_btnUpgrade = makeButton("software-update-available-symbolic", _("Update"),
-                              G_CALLBACK(cb_btn_upgrade), this);
-    gtk_widget_set_tooltip_text(m_btnUpgrade, _("Upgrade all system packages"));
-
-    m_btnRefresh = makeButton("view-refresh-symbolic", _("Refresh"),
-                              G_CALLBACK(cb_btn_refresh), this);
-    gtk_widget_set_tooltip_text(m_btnRefresh, _("Refresh package list"));
-
-    m_btnApply = makeButton("object-select-symbolic", _("Apply"),
-                            G_CALLBACK(cb_btn_apply), this);
-    gtk_widget_set_tooltip_text(m_btnApply, _("Apply pending transaction"));
-
-    gtk_box_pack_start(GTK_BOX(m_toolbar), m_btnUpgrade, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(m_toolbar), m_btnRefresh, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(m_toolbar), m_btnApply,   FALSE, FALSE, 4);
+    m_menuBar->copy(items);
 }
 
+void MainWindow::buildToolbar() {
+    m_btnUpgrade = new Fl_Button(0, 0, 10, 10, _("Update"));
+    m_btnUpgrade->tooltip(_("Upgrade all system packages"));
+    m_btnUpgrade->callback(cb_btn_upgrade, this);
+
+    m_btnRefresh = new Fl_Button(0, 0, 10, 10, _("Refresh"));
+    m_btnRefresh->tooltip(_("Refresh package list"));
+    m_btnRefresh->callback(cb_btn_refresh, this);
+
+    m_btnApply = new Fl_Button(0, 0, 10, 10, _("Apply"));
+    m_btnApply->tooltip(_("Apply pending transaction"));
+    m_btnApply->callback(cb_btn_apply, this);
+}
 
 void MainWindow::buildSearchBar() {
-    m_searchBar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_widget_set_margin_top(m_searchBar, 4);
-    gtk_widget_set_margin_bottom(m_searchBar, 4);
-
-    m_searchEntry = gtk_search_entry_new();
-    g_signal_connect(m_searchEntry, "search-changed", G_CALLBACK(cb_search_changed), this);
-
-    gtk_box_pack_start(GTK_BOX(m_searchBar), m_searchEntry, TRUE, TRUE, 5);
+    m_searchEntry = new Fl_Input(0, 0, 10, 10);
+    m_searchEntry->when(FL_WHEN_CHANGED);
+    m_searchEntry->callback(cb_search_changed, this);
 }
 
-
 void MainWindow::buildPackageTable() {
-    m_listStore = gtk_list_store_new(COL_COUNT,
-        G_TYPE_STRING,
-        G_TYPE_STRING,
-        G_TYPE_STRING,
-        G_TYPE_STRING,
-        G_TYPE_POINTER
-    );
-
-    m_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(m_listStore));
-    g_object_unref(m_listStore);
-
-    GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
-
-    GtkTreeViewColumn *colStatus = gtk_tree_view_column_new_with_attributes(
-        "S", renderer, "text", COL_STATUS, nullptr);
-    gtk_tree_view_column_set_fixed_width(colStatus, 30);
-    gtk_tree_view_column_set_sizing(colStatus, GTK_TREE_VIEW_COLUMN_FIXED);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(m_treeView), colStatus);
-
-    GtkTreeViewColumn *colName = gtk_tree_view_column_new_with_attributes(
-        _("Name"), renderer, "text", COL_NAME, nullptr);
-    gtk_tree_view_column_set_min_width(colName, Settings::instance().nameColumnWidth());
-    gtk_tree_view_column_set_resizable(colName, TRUE);
-    g_signal_connect(colName, "notify::width", G_CALLBACK(cb_col_width_changed), this);
-    m_colName = colName;
-    gtk_tree_view_append_column(GTK_TREE_VIEW(m_treeView), colName);
-
-    GtkTreeViewColumn *colVersion = gtk_tree_view_column_new_with_attributes(
-        _("Version"), renderer, "text", COL_VERSION, nullptr);
-    gtk_tree_view_column_set_min_width(colVersion, Settings::instance().versionColumnWidth());
-    gtk_tree_view_column_set_resizable(colVersion, TRUE);
-    g_signal_connect(colVersion, "notify::width", G_CALLBACK(cb_col_width_changed), this);
-    m_colVersion = colVersion;
-    gtk_tree_view_append_column(GTK_TREE_VIEW(m_treeView), colVersion);
-
-    GtkTreeViewColumn *colDesc = gtk_tree_view_column_new_with_attributes(
-        _("Description"), renderer, "text", COL_DESCRIPTION, nullptr);
-    gtk_tree_view_column_set_resizable(colDesc, TRUE);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(m_treeView), colDesc);
-
-    gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(m_treeView), TRUE);
-
-    m_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(m_treeView));
-    gtk_tree_selection_set_mode(m_selection, GTK_SELECTION_SINGLE);
-    g_signal_connect(m_selection, "changed",           G_CALLBACK(cb_table_select),      this);
-    g_signal_connect(m_treeView,  "row-activated",     G_CALLBACK(cb_row_activated),     this);
-    g_signal_connect(m_treeView,  "button-press-event",G_CALLBACK(cb_tree_button_press), this);
+    m_pkgBrowser = new PackageBrowser(0, 0, 10, 10);
+    m_pkgBrowser->owner = this;
+    m_pkgBrowser->column_char('\t');
+    m_pkgBrowser->column_widths(m_pkgColWidths);
+    m_pkgBrowser->when(FL_WHEN_CHANGED);
+    m_pkgBrowser->callback(cb_table_select, this);
+    m_pkgBrowser->has_scrollbar(Fl_Browser_::VERTICAL);
+    m_pkgBrowser->format_char(0);
 
     buildPopupMenu();
 }
 
-void MainWindow::buildCategoryPanel() {
-    m_categoryList = gtk_list_box_new();
-    gtk_list_box_set_selection_mode(GTK_LIST_BOX(m_categoryList), GTK_SELECTION_SINGLE);
-    g_signal_connect(m_categoryList, "row-selected",
-                     G_CALLBACK(cb_category_selected), this);
+void MainWindow::buildPopupMenu() {
+    m_popupMenu = new Fl_Menu_Button(0, 0, 0, 0);
+    // An invisible context menu: with FL_NO_BOX the FLTK popup() honours the
+    // current mouse position instead of the (zero-sized) widget position.
+    m_popupMenu->box(FL_NO_BOX);
+    m_popupMenu->type(Fl_Menu_Button::POPUP3);
+    Fl_Menu_Item items[] = {
+        {_("Install"), 0, cb_popup_install, this, 0},
+        {_("Update package"), 0, cb_popup_update, this, 0},
+        {_("Remove"), 0, cb_popup_remove, this, FL_MENU_DIVIDER},
+        {_("Unmark"), 0, cb_popup_unmark, this, 0},
+        {0}
+    };
+    m_popupMenu->copy(items);
+}
 
+void MainWindow::addCategoryRow(const std::string &label, int kind,
+                                const std::string &repo) {
+    m_categoryRows.push_back({kind, repo});
+    m_categoryList->add(label.c_str());
+}
+
+void MainWindow::buildCategoryPanel() {
+    m_categoryList = new Fl_Hold_Browser(0, 0, 10, 10);
+    m_categoryList->when(FL_WHEN_CHANGED);
+    m_categoryList->format_char(0);
+    m_categoryList->has_scrollbar(Fl_Browser_::VERTICAL);
+    m_categoryList->callback(cb_category_selected, this);
+
+    m_categoryRows.clear();
     addCategoryRow(_("All packages"), 0, "");
     addCategoryRow(_("Installed"), 1, "");
     addCategoryRow(_("Not installed"), 2, "");
     addCategoryRow(_("Outdated"), 3, "");
-
-    GtkListBoxRow *catHeader = addCategoryRow(_("Categories"), -1, "");
-    gtk_list_box_row_set_selectable(catHeader, FALSE);
-    gtk_list_box_row_set_activatable(catHeader, FALSE);
+    addCategoryRow(_("Categories"), -1, "");
 
     for (const auto &cat : category::all())
         addCategoryRow(_(cat.c_str()), 5, cat);
-
-    m_categoryScroll = gtk_scrolled_window_new(nullptr, nullptr);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(m_categoryScroll),
-        GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-    gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(m_categoryScroll),
-        GTK_SHADOW_NONE);
-    gtk_widget_set_size_request(m_categoryScroll, 170, -1);
-    gtk_container_add(GTK_CONTAINER(m_categoryScroll), m_categoryList);
 
     int index = 0;
     switch (Settings::instance().viewOption()) {
@@ -357,198 +173,158 @@ void MainWindow::buildCategoryPanel() {
         case ViewOption::Outdated:     index = 3; break;
         default:                       index = 0; break;
     }
-    GtkListBoxRow *row = gtk_list_box_get_row_at_index(GTK_LIST_BOX(m_categoryList), index);
-    if (row) {
-        g_signal_handlers_block_by_func(m_categoryList,
-            (gpointer)G_CALLBACK(cb_category_selected), this);
-        gtk_list_box_select_row(GTK_LIST_BOX(m_categoryList), row);
-        g_signal_handlers_unblock_by_func(m_categoryList,
-            (gpointer)G_CALLBACK(cb_category_selected), this);
-    }
+    m_selectedCategoryIndex = index;
+    m_categoryList->value(index + 1);
 }
-
-GtkListBoxRow *MainWindow::addCategoryRow(const std::string &label, int kind,
-                                          const std::string &repo) {
-    GtkWidget *row = gtk_list_box_row_new();
-    GtkWidget *lbl = gtk_label_new(label.c_str());
-    gtk_label_set_xalign(GTK_LABEL(lbl), 0.0f);
-    gtk_label_set_ellipsize(GTK_LABEL(lbl), PANGO_ELLIPSIZE_END);
-    gtk_widget_set_margin_start(lbl, 10);
-    gtk_widget_set_margin_end(lbl, 10);
-    gtk_widget_set_margin_top(lbl, 5);
-    gtk_widget_set_margin_bottom(lbl, 5);
-    if (kind == -1) {
-        GtkStyleContext *sc = gtk_widget_get_style_context(lbl);
-        gtk_style_context_add_class(sc, "dim-label");
-    }
-    gtk_container_add(GTK_CONTAINER(row), lbl);
-
-    g_object_set_data(G_OBJECT(row), "kind", GINT_TO_POINTER(kind));
-    if (!repo.empty())
-        g_object_set_data_full(G_OBJECT(row), "value", g_strdup(repo.c_str()), g_free);
-
-    gtk_list_box_insert(GTK_LIST_BOX(m_categoryList), row, -1);
-    return GTK_LIST_BOX_ROW(row);
-}
-
-void MainWindow::buildPopupMenu() {
-    m_popupMenu = gtk_menu_new();
-
-    GtkWidget *installItem = gtk_menu_item_new_with_label(_("Install"));
-    g_signal_connect(installItem, "activate", G_CALLBACK(cb_popup_install), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(m_popupMenu), installItem);
-
-    GtkWidget *removeItem = gtk_menu_item_new_with_label(_("Remove"));
-    g_signal_connect(removeItem, "activate", G_CALLBACK(cb_popup_remove), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(m_popupMenu), removeItem);
-
-    gtk_menu_shell_append(GTK_MENU_SHELL(m_popupMenu), gtk_separator_menu_item_new());
-
-    GtkWidget *unmarkItem = gtk_menu_item_new_with_label(_("Unmark"));
-    g_signal_connect(unmarkItem, "activate", G_CALLBACK(cb_popup_unmark), this);
-    gtk_menu_shell_append(GTK_MENU_SHELL(m_popupMenu), unmarkItem);
-
-    gtk_widget_show_all(m_popupMenu);
-}
-
 
 void MainWindow::buildInfoPanel() {
-    m_notebook = gtk_notebook_new();
-    gtk_notebook_set_show_border(GTK_NOTEBOOK(m_notebook), FALSE);
+    m_notebook = new MainTabs(0, 0, 10, 10);
 
-    m_infoBuffer = gtk_text_buffer_new(nullptr);
-    m_infoView   = gtk_text_view_new_with_buffer(m_infoBuffer);
-    g_object_unref(m_infoBuffer);
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(m_infoView), FALSE);
-    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(m_infoView), GTK_WRAP_WORD);
-    gtk_text_view_set_top_margin(GTK_TEXT_VIEW(m_infoView), 8);
-    gtk_text_view_set_bottom_margin(GTK_TEXT_VIEW(m_infoView), 8);
-    gtk_text_view_set_left_margin(GTK_TEXT_VIEW(m_infoView), 10);
-    gtk_text_view_set_right_margin(GTK_TEXT_VIEW(m_infoView), 10);
-    GtkWidget *infoScroll = gtk_scrolled_window_new(nullptr, nullptr);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(infoScroll),
-        GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-    gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(infoScroll), GTK_SHADOW_NONE);
-    gtk_container_add(GTK_CONTAINER(infoScroll), m_infoView);
-    gtk_notebook_append_page(GTK_NOTEBOOK(m_notebook), infoScroll, gtk_label_new(_("Info")));
+    m_notebook->begin();
 
-    m_filesBuffer = gtk_text_buffer_new(nullptr);
-    m_filesView   = gtk_text_view_new_with_buffer(m_filesBuffer);
-    g_object_unref(m_filesBuffer);
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(m_filesView), FALSE);
-    gtk_text_view_set_top_margin(GTK_TEXT_VIEW(m_filesView), 8);
-    gtk_text_view_set_bottom_margin(GTK_TEXT_VIEW(m_filesView), 8);
-    gtk_text_view_set_left_margin(GTK_TEXT_VIEW(m_filesView), 10);
-    gtk_text_view_set_right_margin(GTK_TEXT_VIEW(m_filesView), 10);
-    GtkWidget *filesScroll = gtk_scrolled_window_new(nullptr, nullptr);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(filesScroll),
-        GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-    gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(filesScroll), GTK_SHADOW_NONE);
-    gtk_container_add(GTK_CONTAINER(filesScroll), m_filesView);
-    gtk_notebook_append_page(GTK_NOTEBOOK(m_notebook), filesScroll, gtk_label_new(_("Files")));
+    Fl_Group *infoPage = new Fl_Group(0, 0, 10, 10, _("Info"));
+    infoPage->begin();
+    m_infoBuffer = new Fl_Text_Buffer();
+    m_infoView = new Fl_Text_Display(0, 0, 10, 10);
+    m_infoView->buffer(m_infoBuffer);
+    m_infoView->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
+    infoPage->end();
 
-    m_sizeBuffer = gtk_text_buffer_new(nullptr);
-    m_sizeView   = gtk_text_view_new_with_buffer(m_sizeBuffer);
-    g_object_unref(m_sizeBuffer);
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(m_sizeView), FALSE);
-    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(m_sizeView), GTK_WRAP_WORD);
-    gtk_text_view_set_top_margin(GTK_TEXT_VIEW(m_sizeView), 8);
-    gtk_text_view_set_bottom_margin(GTK_TEXT_VIEW(m_sizeView), 8);
-    gtk_text_view_set_left_margin(GTK_TEXT_VIEW(m_sizeView), 10);
-    gtk_text_view_set_right_margin(GTK_TEXT_VIEW(m_sizeView), 10);
-    GtkWidget *sizeScroll = gtk_scrolled_window_new(nullptr, nullptr);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sizeScroll),
-        GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-    gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sizeScroll), GTK_SHADOW_NONE);
-    gtk_container_add(GTK_CONTAINER(sizeScroll), m_sizeView);
-    gtk_notebook_append_page(GTK_NOTEBOOK(m_notebook), sizeScroll, gtk_label_new(_("Size")));
+    Fl_Group *filesPage = new Fl_Group(0, 0, 10, 10, _("Files"));
+    filesPage->begin();
+    m_filesBuffer = new Fl_Text_Buffer();
+    m_filesView = new Fl_Text_Display(0, 0, 10, 10);
+    m_filesView->buffer(m_filesBuffer);
+    m_filesView->wrap_mode(Fl_Text_Display::WRAP_NONE, 0);
+    filesPage->end();
 
-    m_transStore = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
-    m_transTree  = gtk_tree_view_new_with_model(GTK_TREE_MODEL(m_transStore));
-    g_object_unref(m_transStore);
-    GtkCellRenderer *transRenderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(m_transTree),
-        -1, _("Op"), transRenderer, "text", 0, nullptr);
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(m_transTree),
-        -1, _("Package"), transRenderer, "text", 1, nullptr);
-    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(m_transTree), TRUE);
-    gtk_widget_set_margin_start(m_transTree, 8);
-    gtk_widget_set_margin_end(m_transTree, 8);
-    gtk_widget_set_margin_top(m_transTree, 6);
-    gtk_widget_set_margin_bottom(m_transTree, 6);
-    GtkWidget *transScroll = gtk_scrolled_window_new(nullptr, nullptr);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(transScroll),
-        GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-    gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(transScroll), GTK_SHADOW_NONE);
-    gtk_container_add(GTK_CONTAINER(transScroll), m_transTree);
-    gtk_notebook_append_page(GTK_NOTEBOOK(m_notebook), transScroll,
-        gtk_label_new(_("Transaction")));
+    Fl_Group *sizePage = new Fl_Group(0, 0, 10, 10, _("Size"));
+    sizePage->begin();
+    m_sizeBuffer = new Fl_Text_Buffer();
+    m_sizeView = new Fl_Text_Display(0, 0, 10, 10);
+    m_sizeView->buffer(m_sizeBuffer);
+    m_sizeView->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
+    sizePage->end();
+
+    Fl_Group *transPage = new Fl_Group(0, 0, 10, 10, _("Transaction"));
+    transPage->begin();
+    m_transList = new Fl_Browser(0, 0, 10, 10);
+    m_transList->column_char('\t');
+    static int transWidths[] = {40, 0};
+    m_transList->column_widths(transWidths);
+    m_transList->format_char(0);
+    transPage->end();
+
+    m_notebook->end();
 }
-
 
 void MainWindow::buildStatusBar() {
-    m_statusbar      = gtk_statusbar_new();
-    m_statusContextId = gtk_statusbar_get_context_id(GTK_STATUSBAR(m_statusbar), "iruka");
+    m_statusbar = new Fl_Box(0, 0, 10, 10, "");
+    m_statusbar->box(FL_FLAT_BOX);
+    m_statusbar->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    m_statusbar->labelsize(12);
 }
-
 
 void MainWindow::buildProgressDialog() {
-    m_progressDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(m_progressDialog), _(IRUKA_APP_NAME));
-    gtk_window_set_transient_for(GTK_WINDOW(m_progressDialog), GTK_WINDOW(m_window));
-    gtk_window_set_modal(GTK_WINDOW(m_progressDialog), TRUE);
-    gtk_window_set_position(GTK_WINDOW(m_progressDialog), GTK_WIN_POS_CENTER_ON_PARENT);
-    gtk_window_set_default_size(GTK_WINDOW(m_progressDialog), 420, 220);
-    g_signal_connect(m_progressDialog, "delete-event",
-        G_CALLBACK(cb_progress_delete), this);
+    m_progressDialog = new Fl_Window(420, 260, _(IRUKA_APP_NAME));
+    m_progressDialog->set_modal();
+    m_progressDialog->callback(cb_progress_close, this);
 
-    GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
-    gtk_widget_set_margin_start(vbox, 12);
-    gtk_widget_set_margin_end(vbox, 12);
-    gtk_widget_set_margin_top(vbox, 12);
-    gtk_widget_set_margin_bottom(vbox, 12);
-    gtk_container_add(GTK_CONTAINER(m_progressDialog), vbox);
+    m_progressDialog->begin();
 
-    m_progressLabel = gtk_label_new("");
-    gtk_label_set_xalign(GTK_LABEL(m_progressLabel), 0.0);
-    gtk_box_pack_start(GTK_BOX(vbox), m_progressLabel, FALSE, FALSE, 0);
+    m_progressLabel = new Fl_Box(12, 12, 396, 22, "");
+    m_progressLabel->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    m_progressBar = gtk_progress_bar_new();
-    gtk_box_pack_start(GTK_BOX(vbox), m_progressBar, FALSE, FALSE, 0);
+    m_progressBar = new Fl_Progress(12, 40, 396, 22);
+    m_progressBar->minimum(0.0f);
+    m_progressBar->maximum(1.0f);
+    m_progressBar->value(0.0f);
 
-    m_progressExpander = gtk_expander_new(_("Show details"));
-    gtk_box_pack_start(GTK_BOX(vbox), m_progressExpander, TRUE, TRUE, 0);
+    m_progressToggle = new Fl_Button(12, 72, 120, 24, _("Show details"));
+    m_progressToggle->callback(cb_progress_toggle, this);
 
-    GtkWidget *scroll = gtk_scrolled_window_new(nullptr, nullptr);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
-        GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-    gtk_widget_set_size_request(scroll, 380, 160);
+    m_progressBuffer = new Fl_Text_Buffer();
+    m_progressView = new Fl_Text_Display(12, 104, 396, 104);
+    m_progressView->buffer(m_progressBuffer);
+    m_progressView->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
+    m_progressView->hide();
 
-    m_progressBuffer = gtk_text_buffer_new(nullptr);
-    m_progressView   = gtk_text_view_new_with_buffer(m_progressBuffer);
-    g_object_unref(m_progressBuffer);
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(m_progressView), FALSE);
-    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(m_progressView), GTK_WRAP_CHAR);
-    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(m_progressView), FALSE);
+    m_progressButton = new Fl_Button(320, 220, 88, 28, _("Cancel"));
+    m_progressButton->callback(cb_progress_btn, this);
 
-    gtk_container_add(GTK_CONTAINER(scroll), m_progressView);
-    gtk_container_add(GTK_CONTAINER(m_progressExpander), scroll);
-
-    GtkWidget *btnBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_widget_set_halign(btnBox, GTK_ALIGN_END);
-    m_progressButton = gtk_button_new_with_label(_("Cancel"));
-    g_signal_connect(m_progressButton, "clicked", G_CALLBACK(cb_progress_btn), this);
-    gtk_box_pack_start(GTK_BOX(btnBox), m_progressButton, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(vbox), btnBox, FALSE, FALSE, 0);
+    m_progressDialog->end();
 }
 
+void MainWindow::layout() {
+    if (!m_window) return;
+
+    int W = m_window->w();
+    int H = m_window->h();
+    int margin = 8;
+    int menuH = 28;
+    int topH = 36;
+    int statusH = 22;
+    int catW = 170;
+    int gap = 6;
+
+    m_menuBar->resize(0, 0, W, menuH);
+
+    int topY = menuH;
+    int btnW = 84;
+    int bx = W - margin - (btnW * 3 + gap * 2);
+    if (bx < 220) bx = 220;
+
+    int searchW = bx - margin - 8;
+    if (searchW < 80) searchW = 80;
+
+    m_searchEntry->resize(margin, topY + 4, searchW, 28);
+    m_btnUpgrade->resize(bx, topY + 4, btnW, 28);
+    m_btnRefresh->resize(bx + btnW + gap, topY + 4, btnW, 28);
+    m_btnApply->resize(bx + 2 * (btnW + gap), topY + 4, btnW, 28);
+
+    int contentY = topY + topH;
+    int contentH = H - contentY - statusH - margin;
+    if (contentH < 60) contentH = 60;
+
+    m_categoryList->resize(margin, contentY, catW, contentH);
+
+    int rightX = margin + catW + gap;
+    int rightW = W - rightX - margin;
+    if (rightW < 120) rightW = 120;
+
+    int pkgH = m_detailsVisible ? static_cast<int>(contentH * 0.62) : contentH;
+    m_pkgBrowser->resize(rightX, contentY, rightW, pkgH);
+
+    if (m_detailsVisible) {
+        int infoY = contentY + pkgH + 4;
+        int infoH = contentH - pkgH - 4;
+        if (infoH < 40) infoH = 40;
+        m_notebook->resize(rightX, infoY, rightW, infoH);
+        m_notebook->show();
+    } else {
+        m_notebook->hide();
+    }
+
+    m_pkgColWidths[0] = 34;
+    m_pkgColWidths[1] = Settings::instance().nameColumnWidth();
+    m_pkgColWidths[2] = Settings::instance().versionColumnWidth();
+    m_pkgColWidths[3] = 0;
+    m_pkgBrowser->column_widths(m_pkgColWidths);
+
+    m_statusbar->resize(margin, H - statusH - margin / 2, W - 2 * margin, statusH);
+
+    m_window->redraw();
+}
 
 void MainWindow::toggleDetails() {
-    if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(m_viewDetailsItem))) {
-        gtk_widget_show(m_notebook);
-        gtk_paned_set_position(GTK_PANED(m_mainPaned), m_lastPanedPosition);
-    } else {
-        m_lastPanedPosition = gtk_paned_get_position(GTK_PANED(m_mainPaned));
-        gtk_widget_hide(m_notebook);
+    m_detailsVisible = !m_detailsVisible;
+
+    Fl_Menu_Item *item = const_cast<Fl_Menu_Item *>(
+        m_menuBar->find_item(_("Show details panel")));
+    if (item) {
+        if (m_detailsVisible) item->set();
+        else item->clear();
     }
+
+    layout();
 }

@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include <FL/Fl.H>
 #include "main_window.h"
 #include "constants.h"
 #include "settings.h"
@@ -28,6 +28,8 @@ static void init_i18n() {
 }
 
 int main(int argc, char *argv[]) {
+  (void)argc;
+  (void)argv;
   signal(SIGPIPE, SIG_IGN);
 
   Settings::instance().load();
@@ -47,14 +49,17 @@ int main(int argc, char *argv[]) {
     setenv("DISPLAY", x11Display.c_str(), 1);
   }
 
-  gtk_init(&argc, &argv);
-
+  Fl::scheme("gtk+");
   theme::apply();
+
+  // Initialise FLTK's threading support. Worker threads marshal their
+  // results back to the UI thread through Fl::awake().
+  Fl::lock();
 
   MainWindow *win = new MainWindow();
   win->show();
 
-  gtk_main();
+  Fl::run();
 
   Settings::instance().save();
   delete win;

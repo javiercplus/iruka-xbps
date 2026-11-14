@@ -1,10 +1,42 @@
-
 #include "main_window_private.h"
 #include "constants.h"
 #include "i18n.h"
+#include <FL/Fl.H>
+#include <FL/Fl_Browser.H>
+#include <FL/fl_ask.H>
 #include <string>
 #include <vector>
 #include <algorithm>
+
+namespace {
+
+std::string sanitizeField(const std::string &text) {
+    std::string out = text;
+    for (char &c : out) {
+        if (c == '\n' || c == '\r' || c == '\t') c = ' ';
+    }
+    return out;
+}
+
+std::string packageLine(const std::string &status,
+                        const PackageRepository::PackageData *pkg) {
+    std::string line = status;
+    line += '\t';
+    line += sanitizeField(pkg->name);
+    line += '\t';
+    line += sanitizeField(pkg->version);
+    line += '\t';
+    line += sanitizeField(pkg->description);
+    return line;
+}
+
+}
+
+PackageRepository::PackageData *MainWindow::selectedPackage() {
+    int line = m_pkgBrowser->value();
+    if (line < 2) return nullptr;
+    return static_cast<PackageRepository::PackageData *>(m_pkgBrowser->data(line));
+}
 
 void MainWindow::addToTransaction(const std::string &pkgName, bool install) {
     if (install) {
@@ -15,26 +47,17 @@ void MainWindow::addToTransaction(const std::string &pkgName, bool install) {
         m_removeMarks.insert(pkgName);
     }
 
-    GtkTreeIter iter;
-    gtk_list_store_append(m_transStore, &iter);
-    gtk_list_store_set(m_transStore, &iter,
-        0, install ? "I" : "X",
-        1, pkgName.c_str(),
-        -1);
+    std::string op = install ? "I" : "X";
+    std::string line = op + "\t" + pkgName;
+    m_transList->add(line.c_str());
 
-    setPackageStatus(pkgName, install ? "I" : "X");
+    setPackageStatus(pkgName, op);
 }
 
 void MainWindow::do_unmark() {
-    GtkTreeIter   iter;
-    GtkTreeModel *model = GTK_TREE_MODEL(m_listStore);
-    if (!gtk_tree_selection_get_selected(m_selection, &model, &iter)) return;
+    auto *pkg = selectedPackage();
+    if (!pkg) return;
 
-    gpointer ptr = nullptr;
-    gtk_tree_model_get(model, &iter, COL_PKG_PTR, &ptr, -1);
-    if (!ptr) return;
-
-    auto *pkg = static_cast<PackageRepository::PackageData*>(ptr);
     const std::string name = pkg->name;
 
     bool changed = false;
@@ -48,18 +71,17 @@ void MainWindow::do_unmark() {
     if (m_removeMarks.erase(name) > 0) changed = true;
     if (!changed) return;
 
-    GtkTreeModel *tm = GTK_TREE_MODEL(m_transStore);
-    GtkTreeIter   ti;
-    gboolean valid = gtk_tree_model_get_iter_first(tm, &ti);
-    while (valid) {
-        gchar *rowName = nullptr;
-        gtk_tree_model_get(tm, &ti, 1, &rowName, -1);
-        if (rowName && name == rowName) {
-            g_free(rowName);
-            valid = gtk_list_store_remove(m_transStore, &ti);
+    for (int i = 1; i <= m_transList->size(); ) {
+        const char *txt = m_transList->text(i);
+        std::string row = txt ? txt : "";
+        std::string rowName = row;
+        auto tab = row.find('\t');
+        if (tab != std::string::npos) rowName = row.substr(tab + 1);
+
+        if (rowName == name) {
+            m_transList->remove(i);
         } else {
-            g_free(rowName);
-            valid = gtk_tree_model_iter_next(tm, &ti);
+            ++i;
         }
     }
 
@@ -69,19 +91,14 @@ void MainWindow::do_unmark() {
 
 void MainWindow::setPackageStatus(const std::string &pkgName,
                                   const std::string &status) {
-    GtkTreeModel *model = GTK_TREE_MODEL(m_listStore);
-    GtkTreeIter   iter;
-    gboolean valid = gtk_tree_model_get_iter_first(model, &iter);
-    while (valid) {
-        gchar *name = nullptr;
-        gtk_tree_model_get(model, &iter, COL_NAME, &name, -1);
-        if (name && pkgName == name) {
-            gtk_list_store_set(m_listStore, &iter, COL_STATUS, status.c_str(), -1);
-            g_free(name);
+    for (int i = 2; i <= m_pkgBrowser->size(); ++i) {
+        auto *pkg = static_cast<PackageRepository::PackageData *>(
+            m_pkgBrowser->data(i));
+        if (pkg && pkgName == pkg->name) {
+            std::string line = packageLine(status, pkg);
+            m_pkgBrowser->text(i, line.c_str());
             return;
         }
-        g_free(name);
-        valid = gtk_tree_model_iter_next(model, &iter);
     }
 }
 
@@ -89,11 +106,7 @@ void MainWindow::commitTransaction() {
     if (m_transactionRunning) return;
 
     if (m_transactionInstall.empty() && m_transactionRemove.empty()) {
-        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(m_window),
-            GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
-            _("No pending transactions."));
-        g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), nullptr);
-        gtk_widget_show(dialog);
+        fl_message("%s", _("No pending transactions."));
         return;
     }
 
@@ -109,15 +122,8 @@ void MainWindow::commitTransaction() {
         msg += "\n";
     }
 
-    GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(m_window),
-        GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL,
-        "%s", msg.c_str());
-    gtk_dialog_add_button(GTK_DIALOG(dialog), _("OK"), GTK_RESPONSE_ACCEPT);
-    if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_ACCEPT) {
-        gtk_widget_destroy(dialog);
-        return;
-    }
-    gtk_widget_destroy(dialog);
+    int choice = fl_choice("%s", _("Cancel"), _("OK"), nullptr, msg.c_str());
+    if (choice != 1) return;
 
     m_commandQueue.clear();
     if (!m_transactionInstall.empty()) {
@@ -140,6 +146,6 @@ void MainWindow::clearTransaction() {
     m_transactionRemove.clear();
     m_installMarks.clear();
     m_removeMarks.clear();
-    gtk_list_store_clear(m_transStore);
+    m_transList->clear();
     populateTable();
 }

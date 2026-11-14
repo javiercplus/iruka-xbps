@@ -285,10 +285,10 @@ msgstr "保護されたパッケージは削除できません: %s"
 #: src/gui/main_window_actions.cpp:133
 msgid ""
 "A graphical package manager for XBPS.\n"
-"Built with GTK3."
+"Built with FLTK."
 msgstr ""
 "XBPS 用のグラフィカルなパッケージマネージャーです。\n"
-"GTK3 で構築されています。"
+"FLTK で構築されています。"
 
 #: src/gui/main_window_actions.cpp:139
 msgid ""

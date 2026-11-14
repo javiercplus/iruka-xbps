@@ -290,10 +290,10 @@ msgstr "A védett csomag nem távolítható el: %s"
 #: src/gui/main_window_actions.cpp:133
 msgid ""
 "A graphical package manager for XBPS.\n"
-"Built with GTK3."
+"Built with FLTK."
 msgstr ""
 "Grafikus csomagkezelő az XBPS-hez.\n"
-"GTK3-mal készült."
+"FLTK-val készült."
 
 #: src/gui/main_window_actions.cpp:139
 msgid ""

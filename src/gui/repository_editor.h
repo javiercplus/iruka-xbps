@@ -1,13 +1,19 @@
 #ifndef IRUKA_REPOSITORY_EDITOR_H
 #define IRUKA_REPOSITORY_EDITOR_H
 
-#include <gtk/gtk.h>
 #include <string>
 #include <vector>
 
+class Fl_Widget;
+class Fl_Window;
+class Fl_Tabs;
+class Fl_Group;
+class Fl_Text_Editor;
+class Fl_Text_Buffer;
+
 class RepositoryEditor {
 public:
-  explicit RepositoryEditor(GtkWidget *parent);
+  explicit RepositoryEditor(Fl_Window *parent);
   ~RepositoryEditor();
 
   void show();
@@ -16,7 +22,9 @@ public:
 private:
   struct RepoFile {
     std::string fileName;
-    GtkWidget *textView;
+    Fl_Group *page;
+    Fl_Text_Editor *editor;
+    Fl_Text_Buffer *buffer;
   };
 
   void buildUi();
@@ -28,16 +36,16 @@ private:
   void applySaveResult(const std::string &output, bool success);
   void applyDeleteResult(int page, const std::string &output, bool success);
 
-  static void cb_add(GtkWidget *w, gpointer d);
-  static void cb_del(GtkWidget *w, gpointer d);
-  static void cb_save(GtkWidget *w, gpointer d);
-  static gboolean cb_delete(GtkWidget *w, GdkEvent *event, gpointer d);
-  static gboolean save_done_cb(gpointer data);
-  static gboolean delete_done_cb(gpointer data);
+  static void cb_add(Fl_Widget *w, void *d);
+  static void cb_del(Fl_Widget *w, void *d);
+  static void cb_save(Fl_Widget *w, void *d);
+  static void cb_close(Fl_Widget *w, void *d);
+  static void save_done_awake(void *data);
+  static void delete_done_awake(void *data);
 
-  GtkWidget *m_parent;
-  GtkWidget *m_window;
-  GtkWidget *m_notebook;
+  Fl_Window *m_parent;
+  Fl_Window *m_window;
+  Fl_Tabs *m_tabs;
   std::vector<RepoFile> m_files;
 };
 

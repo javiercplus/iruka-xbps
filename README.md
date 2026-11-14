@@ -4,7 +4,7 @@
 
 
 # iruka-xbps
-A graphical front-end for the XBPS package manager, written in C++ using GTK 3.
+A graphical front-end for the XBPS package manager, written in C++ using FLTK.
 
 <img width="871" height="680" alt="image" src="https://github.com/user-attachments/assets/81225ccf-73ad-4e37-8d95-4f589ab26673" />
 
@@ -29,7 +29,7 @@ A graphical front-end for the XBPS package manager, written in C++ using GTK 3.
 
 - Void Linux (or any system running XBPS).
 - C++17 compiler (GCC or Clang).
-- GTK 3 development libraries.
+- FLTK development libraries.
 - Polkit (for privilege escalation).
 - Meson and Ninja build systems.
 

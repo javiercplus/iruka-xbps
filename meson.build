@@ -7,7 +7,18 @@ project('iruka-xbps', 'cpp',
   ],
 )
 
-gtk_dep = dependency('gtk+-3.0', required: true)
+# FLTK can be discovered through pkg-config when available, otherwise fall
+# back to its fltk-config helper.
+fltk_dep = dependency('fltk', required: false)
+if not fltk_dep.found()
+  fltk_config = find_program('fltk-config', required: true)
+  fltk_cflags = run_command(fltk_config, '--cflags', check: true).stdout().strip().split()
+  fltk_ldflags = run_command(fltk_config, '--use-images', '--ldflags', check: true).stdout().strip().split()
+  fltk_dep = declare_dependency(
+    compile_args: fltk_cflags,
+    link_args: fltk_ldflags,
+  )
+endif
 threads_dep = dependency('threads', required: true)
 
 # Install location of the gettext message catalogs (e.g. /usr/share/locale).
@@ -43,7 +54,7 @@ sources = files(
 executable('iruka-xbps',
   sources,
   include_directories: [core_inc, gui_inc],
-  dependencies: [gtk_dep, threads_dep],
+  dependencies: [fltk_dep, threads_dep],
   install: true,
 )
 

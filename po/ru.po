@@ -287,10 +287,10 @@ msgstr "Нельзя удалить защищённый пакет: %s"
 #: src/gui/main_window_actions.cpp:133
 msgid ""
 "A graphical package manager for XBPS.\n"
-"Built with GTK3."
+"Built with FLTK."
 msgstr ""
 "Графический менеджер пакетов для XBPS.\n"
-"Создан с помощью GTK3."
+"Создан с помощью FLTK."
 
 #: src/gui/main_window_actions.cpp:139
 msgid ""

@@ -1,10 +1,13 @@
-
 #include "main_window_private.h"
 #include "xbps_command.h"
 #include "settings.h"
 #include "package.h"
 #include "package_model.h"
 #include "i18n.h"
+#include <FL/Fl.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Input.H>
+#include <FL/Fl_Text_Buffer.H>
 #include <sstream>
 #include <thread>
 #include <mutex>
@@ -12,6 +15,30 @@
 #include <vector>
 #include <algorithm>
 #include <cstdio>
+
+namespace {
+
+std::string sanitizeField(const std::string &text) {
+    std::string out = text;
+    for (char &c : out) {
+        if (c == '\n' || c == '\r' || c == '\t') c = ' ';
+    }
+    return out;
+}
+
+std::string packageLine(const std::string &status,
+                        const PackageRepository::PackageData *pkg) {
+    std::string line = status;
+    line += '\t';
+    line += sanitizeField(pkg->name);
+    line += '\t';
+    line += sanitizeField(pkg->version);
+    line += '\t';
+    line += sanitizeField(pkg->description);
+    return line;
+}
+
+}
 
 void MainWindow::loadPackageList() {
     if (m_loading) return;
@@ -24,10 +51,10 @@ void MainWindow::loadPackageList() {
         auto localPkgs  = XBPSCommand::getLocalPackageList();
         auto remotePkgs = XBPSCommand::getRemotePackageList();
 
-        std::map<std::string, PackageListData*> pkgMap;
+        std::map<std::string, PackageListData *> pkgMap;
         for (auto &pkg : remotePkgs) {
             auto *np = new PackageListData(std::move(pkg));
-            auto it  = pkgMap.find(np->name);
+            auto it = pkgMap.find(np->name);
             if (it != pkgMap.end()) {
                 delete it->second;
                 it->second = np;
@@ -48,9 +75,9 @@ void MainWindow::loadPackageList() {
             }
         }
 
-        for (auto &[name, pkg] : pkgMap) {
-            result->merged.push_back(std::move(*pkg));
-            delete pkg;
+        for (auto &entry : pkgMap) {
+            result->merged.push_back(std::move(*entry.second));
+            delete entry.second;
         }
 
         auto unrequired = XBPSCommand::getUnrequiredPackages();
@@ -58,14 +85,14 @@ void MainWindow::loadPackageList() {
 
         result->outdated = XBPSCommand::getOutdatedPackages();
 
-        g_idle_add(load_done_cb, result);
+        Fl::awake(load_done_awake, result);
     }).detach();
 }
 
 void MainWindow::applyLoadedPackages(std::vector<PackageListData> &&packages,
-                                     std::set<std::string>         &&unreqSet,
+                                     std::set<std::string> &&unreqSet,
                                      std::map<std::string, OutdatedPackageInfo> &&outdated) {
-    gtk_list_store_clear(m_listStore);
+    m_pkgBrowser->clear();
     {
         std::lock_guard<std::mutex> lock(m_mutex);
         m_repo.setData(packages, unreqSet);
@@ -77,16 +104,17 @@ void MainWindow::applyLoadedPackages(std::vector<PackageListData> &&packages,
 }
 
 void MainWindow::populateTable() {
-    gtk_list_store_clear(m_listStore);
+    m_pkgBrowser->clear();
+
+    std::string header = std::string("S\t") + _("Name") + "\t" +
+                         _("Version") + "\t" + _("Description");
+    m_pkgBrowser->add(header.c_str());
 
     std::lock_guard<std::mutex> lock(m_mutex);
     int count = m_model->rowCount();
     for (int i = 0; i < count; i++) {
-        auto *pkg = m_model->getData(i);
+        const auto *pkg = m_model->getData(i);
         if (!pkg) continue;
-
-        GtkTreeIter iter;
-        gtk_list_store_append(m_listStore, &iter);
 
         std::string status;
         if      (m_removeMarks.count(pkg->name) > 0) status = "X";
@@ -95,13 +123,9 @@ void MainWindow::populateTable() {
         else if (pkg->installed()) status = "@";
         else                       status = " ";
 
-        gtk_list_store_set(m_listStore, &iter,
-            COL_STATUS,      status.c_str(),
-            COL_NAME,        pkg->name.c_str(),
-            COL_VERSION,     pkg->version.c_str(),
-            COL_DESCRIPTION, pkg->description.c_str(),
-            COL_PKG_PTR,     (gpointer)pkg,
-            -1);
+        std::string line = packageLine(status, pkg);
+        m_pkgBrowser->add(line.c_str(),
+                          const_cast<PackageRepository::PackageData *>(pkg));
     }
 }
 
@@ -124,94 +148,93 @@ void MainWindow::refreshStatusBar() {
     std::snprintf(buf, sizeof(buf), _("Outdated: %d"), outdated);
     ss << "    " << buf;
 
-    gtk_statusbar_remove_all(GTK_STATUSBAR(m_statusbar), m_statusContextId);
-    gtk_statusbar_push(GTK_STATUSBAR(m_statusbar), m_statusContextId, ss.str().c_str());
+    m_statusbar->copy_label(ss.str().c_str());
+    m_statusbar->redraw();
 }
 
 void MainWindow::applyFilters() {
-  const char *text  = gtk_entry_get_text(GTK_ENTRY(m_searchEntry));
-  std::string query = text ? text : "";
-  ViewOption view   = Settings::instance().viewOption();
+    const char *text = m_searchEntry ? m_searchEntry->value() : nullptr;
+    std::string query = text ? text : "";
+    ViewOption view = Settings::instance().viewOption();
 
-  {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_model->applyFilter(view, "", m_selectedCategory);
-    if (!query.empty()) {
-      m_model->applyFilter(query);
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        m_model->applyFilter(view, "", m_selectedCategory);
+        if (!query.empty()) {
+            m_model->applyFilter(query);
+        }
+        m_model->sort(PackageModel::ColName, true);
     }
-    m_model->sort(PackageModel::ColName, true);
-  }
-  populateTable();
-  refreshStatusBar();
+    populateTable();
+    refreshStatusBar();
 }
 
 void MainWindow::onSearch() {
-  applyFilters();
+    applyFilters();
 }
 
 void MainWindow::applyCategory(int kind, const std::string &value) {
-  switch (kind) {
-    case 0: setView(ViewOption::All); break;
-    case 1: setView(ViewOption::Installed); break;
-    case 2: setView(ViewOption::NotInstalled); break;
-    case 3: setView(ViewOption::Outdated); break;
-    case 5:
-      m_selectedCategory = value;
-      Settings::instance().setViewOption(ViewOption::All);
-      applyFilters();
-      break;
-    default:
-      break;
-  }
+    switch (kind) {
+        case 0: setView(ViewOption::All); break;
+        case 1: setView(ViewOption::Installed); break;
+        case 2: setView(ViewOption::NotInstalled); break;
+        case 3: setView(ViewOption::Outdated); break;
+        case 5:
+            m_selectedCategory = value;
+            Settings::instance().setViewOption(ViewOption::All);
+            applyFilters();
+            break;
+        default:
+            break;
+    }
 }
 
 void MainWindow::onTableSelect() {
     if (m_rebuilding || m_destroyed.load()) return;
 
-    gtk_text_buffer_set_text(m_sizeBuffer, "", -1);
+    if (m_sizeBuffer) m_sizeBuffer->text("");
 
-    if (m_sizeDebounceId) {
-        g_source_remove(m_sizeDebounceId);
-        m_sizeDebounceId = 0;
-    }
-    m_sizeDebounceId = g_timeout_add(250, cb_size_debounce, this);
+    Fl::remove_timeout(cb_size_debounce, this);
+    Fl::add_timeout(0.25, cb_size_debounce, this);
 }
 
 void MainWindow::onSelectionDebounced() {
-    GtkTreeIter  iter;
-    GtkTreeModel *model = GTK_TREE_MODEL(m_listStore);
-    if (!gtk_tree_selection_get_selected(m_selection, &model, &iter)) return;
+    int line = m_pkgBrowser->value();
+    if (line < 2) return;
 
-    gpointer ptr = nullptr;
-    gtk_tree_model_get(model, &iter, COL_PKG_PTR, &ptr, -1);
-    if (!ptr) return;
+    auto *pkg = static_cast<PackageRepository::PackageData *>(
+        m_pkgBrowser->data(line));
+    if (!pkg) return;
 
-    auto *pkg = static_cast<PackageRepository::PackageData*>(ptr);
-    int row = m_model->rowOfPackage(pkg);
+    int row = 0;
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        row = m_model->rowOfPackage(pkg);
+    }
     if (row >= 0) showPackageInfo(row);
 }
 
 void MainWindow::showPackageInfo(int row) {
     std::lock_guard<std::mutex> lock(m_mutex);
-    auto *pkg = m_model->getData(row);
+    const auto *pkg = m_model->getData(row);
     if (!pkg) return;
 
     std::ostringstream ss;
-    ss << _("Name:")         << " " << pkg->name        << "\n";
-    ss << _("Version:")      << " " << pkg->version     << "\n";
-    ss << _("Repository:")   << " " << pkg->repository  << "\n";
-    ss << _("Description:")  << " " << pkg->description << "\n";
+    ss << _("Name:")        << " " << pkg->name        << "\n";
+    ss << _("Version:")     << " " << pkg->version     << "\n";
+    ss << _("Repository:")  << " " << pkg->repository  << "\n";
+    ss << _("Description:") << " " << pkg->description << "\n";
 
-    bool        installed = pkg->installed();
-    std::string pkgName   = pkg->name;
+    bool installed = pkg->installed();
+    std::string pkgName = pkg->name;
 
-    auto *result      = new InfoResult();
-    result->win        = this;
+    auto *result = new InfoResult();
+    result->win = this;
     result->generation = ++m_infoGeneration;
-    result->infoText   = ss.str();
+    result->infoText = ss.str();
 
-    gtk_text_buffer_set_text(m_infoBuffer, ss.str().c_str(), -1);
-    gtk_text_buffer_set_text(m_filesBuffer, "", -1);
+    m_infoBuffer->text(ss.str().c_str());
+    m_filesBuffer->text("");
 
     std::thread([result, pkgName, installed]() {
         auto info = XBPSCommand::getPackageInfo(pkgName, installed);
@@ -237,7 +260,7 @@ void MainWindow::showPackageInfo(int row) {
             ss << _("License:")      << "   " << info.license              << "\n";
             ss << _("Maintainer:")   << "   " << info.maintainer           << "\n";
             ss << _("Arch:")         << "   " << info.arch                 << "\n";
-            ss << "\n" << _("Depends On:") << "   " << info.dependsOn       << "\n";
+            ss << "\n" << _("Depends On:") << "   " << info.dependsOn      << "\n";
             ss << _("Opt Deps:")     << "   " << info.optDepends           << "\n";
             ss << _("Conflicts:")    << "   " << info.conflictsWith        << "\n";
         }
@@ -254,7 +277,7 @@ void MainWindow::showPackageInfo(int row) {
         for (auto &f : files) fss << f << "\n";
         result->filesText = fss.str();
 
-        g_idle_add(info_done_cb, result);
+        Fl::awake(info_done_awake, result);
     }).detach();
 }
 
@@ -262,7 +285,7 @@ void MainWindow::applyPackageInfo(int generation, const std::string &infoText,
                                   const std::string &filesText,
                                   const std::string &sizeText) {
     if (generation != m_infoGeneration) return;
-    gtk_text_buffer_set_text(m_infoBuffer,  infoText.c_str(),  -1);
-    gtk_text_buffer_set_text(m_filesBuffer, filesText.c_str(), -1);
-    gtk_text_buffer_set_text(m_sizeBuffer,  sizeText.c_str(),  -1);
+    m_infoBuffer->text(infoText.c_str());
+    m_filesBuffer->text(filesText.c_str());
+    m_sizeBuffer->text(sizeText.c_str());
 }
