@@ -19,14 +19,20 @@ const char *REPO_DIR = "/etc/xbps.d";
 struct SaveResult {
   RepositoryEditor *editor;
   std::string output;
-  bool success;
+  std::string command;
+  bool success = false;
+  bool authFailed = false;
+  bool retried = false;
 };
 
 struct DeleteResult {
   RepositoryEditor *editor;
   int page;
   std::string output;
-  bool success;
+  std::string command;
+  bool success = false;
+  bool authFailed = false;
+  bool retried = false;
 };
 
 std::string fileNameFromText(const std::string &text) {
@@ -240,20 +246,20 @@ void RepositoryEditor::deleteRepository() {
   }
   gtk_widget_destroy(dialog);
 
-  if (!confirmPkexecPrivileges(GTK_WINDOW(m_window))) return;
-
   std::string cmd = "rm -f " + std::string(REPO_DIR) + "/" + fileName;
 
   auto *result = new DeleteResult();
   result->editor = this;
   result->page = page;
+  result->command = cmd;
 
-  std::thread([result, cmd](){
+  std::thread([result](){
     std::string output;
-    int code = PrivilegedDaemon::instance().run(cmd,
+    int code = PrivilegedDaemon::instance().run(result->command,
         [&output](const std::string &t){ output += t; });
     result->output = output;
     result->success = (code == 0);
+    result->authFailed = (code == -1);
     g_idle_add(delete_done_cb, result);
   }).detach();
 }
@@ -286,8 +292,6 @@ void RepositoryEditor::saveAll() {
     return;
   }
 
-  if (!confirmPkexecPrivileges(GTK_WINDOW(m_window))) return;
-
   std::string command;
   std::string pidStr = std::to_string(getpid());
   int idx = 0;
@@ -314,13 +318,15 @@ void RepositoryEditor::saveAll() {
 
   auto *result = new SaveResult();
   result->editor = this;
+  result->command = command;
 
-  std::thread([result, command](){
+  std::thread([result](){
     std::string output;
-    int code = PrivilegedDaemon::instance().run(command,
+    int code = PrivilegedDaemon::instance().run(result->command,
         [&output](const std::string &t){ output += t; });
     result->output = output;
     result->success = (code == 0);
+    result->authFailed = (code == -1);
     g_idle_add(save_done_cb, result);
   }).detach();
 }
@@ -361,6 +367,27 @@ gboolean RepositoryEditor::cb_delete(GtkWidget*, GdkEvent*, gpointer d) {
 
 gboolean RepositoryEditor::save_done_cb(gpointer data) {
   auto *r = static_cast<SaveResult*>(data);
+
+  if (r->authFailed && !r->retried) {
+    if (confirmPkexecPrivileges(GTK_WINDOW(r->editor->m_window))) {
+      auto *retry = new SaveResult();
+      retry->editor = r->editor;
+      retry->command = r->command;
+      retry->retried = true;
+      std::thread([retry](){
+        std::string output;
+        int code = PrivilegedDaemon::instance().run(retry->command,
+            [&output](const std::string &t){ output += t; });
+        retry->output = output;
+        retry->success = (code == 0);
+        retry->authFailed = (code == -1);
+        g_idle_add(save_done_cb, retry);
+      }).detach();
+      delete r;
+      return G_SOURCE_REMOVE;
+    }
+  }
+
   r->editor->applySaveResult(r->output, r->success);
   delete r;
   return G_SOURCE_REMOVE;
@@ -368,6 +395,28 @@ gboolean RepositoryEditor::save_done_cb(gpointer data) {
 
 gboolean RepositoryEditor::delete_done_cb(gpointer data) {
   auto *r = static_cast<DeleteResult*>(data);
+
+  if (r->authFailed && !r->retried) {
+    if (confirmPkexecPrivileges(GTK_WINDOW(r->editor->m_window))) {
+      auto *retry = new DeleteResult();
+      retry->editor = r->editor;
+      retry->page = r->page;
+      retry->command = r->command;
+      retry->retried = true;
+      std::thread([retry](){
+        std::string output;
+        int code = PrivilegedDaemon::instance().run(retry->command,
+            [&output](const std::string &t){ output += t; });
+        retry->output = output;
+        retry->success = (code == 0);
+        retry->authFailed = (code == -1);
+        g_idle_add(delete_done_cb, retry);
+      }).detach();
+      delete r;
+      return G_SOURCE_REMOVE;
+    }
+  }
+
   r->editor->applyDeleteResult(r->page, r->output, r->success);
   delete r;
   return G_SOURCE_REMOVE;

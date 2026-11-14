@@ -45,7 +45,8 @@ public:
                            std::map<std::string, OutdatedPackageInfo> &&outdated);
   void applyPackageInfo(int generation, const std::string &infoText,
                         const std::string &filesText, const std::string &sizeText);
-  void applyExecResult();
+  void applyExecResult(const std::vector<std::string> &args, bool authFailed,
+                       bool retried);
   void appendProgressOutput(const std::string &text);
 
   bool isDestroyed() const { return m_destroyed.load(); }
@@ -72,7 +73,8 @@ private:
   void setPackageStatus(const std::string &pkgName, const std::string &status);
   void addToTransaction(const std::string &pkgName, bool install);
   void do_unmark();
-  void execWithPrivileges(const std::vector<std::string> &args);
+  void execWithPrivileges(const std::vector<std::string> &args,
+                          bool retried = false);
   void runCommandQueue();
   void startNextCommand();
   void finishRun();

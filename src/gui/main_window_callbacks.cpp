@@ -25,7 +25,7 @@ gboolean info_done_cb(gpointer data) {
 gboolean exec_done_cb(gpointer data) {
     auto *r = static_cast<ExecResult*>(data);
     if (!r->win->isDestroyed()) {
-        r->win->applyExecResult();
+        r->win->applyExecResult(r->args, r->authFailed, r->retried);
     }
     delete r;
     return G_SOURCE_REMOVE;

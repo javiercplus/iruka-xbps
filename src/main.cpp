@@ -42,11 +42,8 @@ int main(int argc, char *argv[]) {
     std::cerr << _("Warning: pkexec not found. Privileged operations may not work.") << std::endl;
   }
 
-  std::string x11Display = utils::detectX11Display();
-  if (!x11Display.empty()) {
-    setenv("DISPLAY", x11Display.c_str(), 1);
-  }
-
+  // Let GTK pick the correct backend (Wayland or X11). Forcing DISPLAY to a
+  // guessed :0 breaks native Wayland sessions with "cannot open display".
   gtk_init(&argc, &argv);
 
   theme::apply();

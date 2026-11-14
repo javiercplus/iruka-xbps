@@ -34,11 +34,6 @@ static bool confirmPkexecPrivileges(GtkWindow *parent) {
 void MainWindow::runCommandQueue() {
     if (m_commandQueue.empty() || m_transactionRunning) return;
 
-    if (!confirmPkexecPrivileges(GTK_WINDOW(m_window))) {
-        m_commandQueue.clear();
-        return;
-    }
-
     m_cancelRequested.store(false);
     m_activeChild.store(0);
     gtk_button_set_label(GTK_BUTTON(m_progressButton), _("Cancel"));
@@ -112,7 +107,8 @@ static std::string shellQuote(const std::string &arg) {
     return out;
 }
 
-void MainWindow::execWithPrivileges(const std::vector<std::string> &args) {
+void MainWindow::execWithPrivileges(const std::vector<std::string> &args,
+                                    bool retried) {
     std::string cmd;
     for (size_t i = 0; i < args.size(); ++i) {
         if (i) cmd += ' ';
@@ -121,6 +117,8 @@ void MainWindow::execWithPrivileges(const std::vector<std::string> &args) {
 
     auto *result = new ExecResult();
     result->win = this;
+    result->args = args;
+    result->retried = retried;
 
     std::thread([result, cmd]() {
         MainWindow *win = result->win;
@@ -134,7 +132,7 @@ void MainWindow::execWithPrivileges(const std::vector<std::string> &args) {
 
         int code = PrivilegedDaemon::instance().run(cmd, sink);
         if (code == -1) {
-            sink(_("Error: privileged helper is not available.\n"));
+            result->authFailed = true;
         }
 
         g_idle_add(exec_done_cb, result);
@@ -154,6 +152,21 @@ void MainWindow::appendProgressOutput(const std::string &text) {
                                  0.0, FALSE, 0.0, 0.0);
 }
 
-void MainWindow::applyExecResult() {
+void MainWindow::applyExecResult(const std::vector<std::string> &args,
+                                 bool authFailed, bool retried) {
+    if (authFailed) {
+        // The helper was not available (pkexec cancelled or failed). Ask the
+        // user once to authenticate again and retry the same command.
+        if (!retried && confirmPkexecPrivileges(GTK_WINDOW(m_window))) {
+            execWithPrivileges(args, true);
+            return;
+        }
+
+        m_commandQueue.clear();
+        appendProgressOutput(_("Error: privileged helper is not available.\n"));
+        finishRun();
+        return;
+    }
+
     startNextCommand();
 }
