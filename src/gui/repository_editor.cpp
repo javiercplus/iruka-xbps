@@ -41,14 +41,20 @@ const char *REPO_DIR = "/etc/xbps.d";
 struct SaveResult {
   RepositoryEditor *editor;
   std::string output;
-  bool success;
+  std::string command;
+  bool success = false;
+  bool authFailed = false;
+  bool retried = false;
 };
 
 struct DeleteResult {
   RepositoryEditor *editor;
   int page;
   std::string output;
-  bool success;
+  std::string command;
+  bool success = false;
+  bool authFailed = false;
+  bool retried = false;
 };
 
 std::string fileNameFromText(const std::string &text) {
@@ -256,20 +262,20 @@ void RepositoryEditor::deleteRepository() {
                          fileName.c_str(), fileName.c_str());
   if (choice != 1) return;
 
-  if (!gui_utils::requestPkexecPrivileges()) return;
-
   std::string cmd = "rm -f " + std::string(REPO_DIR) + "/" + fileName;
 
   auto *result = new DeleteResult();
   result->editor = this;
   result->page = page;
+  result->command = cmd;
 
-  std::thread([result, cmd]() {
+  std::thread([result]() {
     std::string output;
-    int code = PrivilegedDaemon::instance().run(cmd,
+    int code = PrivilegedDaemon::instance().run(result->command,
         [&output](const std::string &t) { output += t; });
     result->output = output;
     result->success = (code == 0);
+    result->authFailed = (code == -1);
     Fl::awake(delete_done_awake, result);
   }).detach();
 }
@@ -299,8 +305,6 @@ void RepositoryEditor::saveAll() {
     return;
   }
 
-  if (!gui_utils::requestPkexecPrivileges()) return;
-
   std::string command;
   std::string pidStr = std::to_string(getpid());
   int idx = 0;
@@ -321,13 +325,15 @@ void RepositoryEditor::saveAll() {
 
   auto *result = new SaveResult();
   result->editor = this;
+  result->command = command;
 
-  std::thread([result, command]() {
+  std::thread([result]() {
     std::string output;
-    int code = PrivilegedDaemon::instance().run(command,
+    int code = PrivilegedDaemon::instance().run(result->command,
         [&output](const std::string &t) { output += t; });
     result->output = output;
     result->success = (code == 0);
+    result->authFailed = (code == -1);
     Fl::awake(save_done_awake, result);
   }).detach();
 }
@@ -360,12 +366,55 @@ void RepositoryEditor::cb_close(Fl_Widget *, void *d) {
 
 void RepositoryEditor::save_done_awake(void *data) {
   auto *r = static_cast<SaveResult *>(data);
+
+  if (r->authFailed && !r->retried) {
+    if (gui_utils::requestPkexecPrivileges()) {
+      auto *retry = new SaveResult();
+      retry->editor = r->editor;
+      retry->command = r->command;
+      retry->retried = true;
+      std::thread([retry]() {
+        std::string output;
+        int code = PrivilegedDaemon::instance().run(retry->command,
+            [&output](const std::string &t) { output += t; });
+        retry->output = output;
+        retry->success = (code == 0);
+        retry->authFailed = (code == -1);
+        Fl::awake(save_done_awake, retry);
+      }).detach();
+      delete r;
+      return;
+    }
+  }
+
   r->editor->applySaveResult(r->output, r->success);
   delete r;
 }
 
 void RepositoryEditor::delete_done_awake(void *data) {
   auto *r = static_cast<DeleteResult *>(data);
+
+  if (r->authFailed && !r->retried) {
+    if (gui_utils::requestPkexecPrivileges()) {
+      auto *retry = new DeleteResult();
+      retry->editor = r->editor;
+      retry->page = r->page;
+      retry->command = r->command;
+      retry->retried = true;
+      std::thread([retry]() {
+        std::string output;
+        int code = PrivilegedDaemon::instance().run(retry->command,
+            [&output](const std::string &t) { output += t; });
+        retry->output = output;
+        retry->success = (code == 0);
+        retry->authFailed = (code == -1);
+        Fl::awake(delete_done_awake, retry);
+      }).detach();
+      delete r;
+      return;
+    }
+  }
+
   r->editor->applyDeleteResult(r->page, r->output, r->success);
   delete r;
 }

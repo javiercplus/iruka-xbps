@@ -42,7 +42,7 @@ void info_done_awake(void *data) {
 void exec_done_awake(void *data) {
     auto *r = static_cast<ExecResult *>(data);
     if (!r->win->isDestroyed()) {
-        r->win->applyExecResult();
+        r->win->applyExecResult(r->args, r->authFailed, r->retried);
     }
     delete r;
 }

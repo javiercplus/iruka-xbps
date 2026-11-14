@@ -70,6 +70,9 @@ struct InfoResult {
 
 struct ExecResult {
     MainWindow *win;
+    std::vector<std::string> args;
+    bool authFailed = false;
+    bool retried = false;
 };
 
 struct ProgressChunk {
