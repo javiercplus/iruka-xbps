@@ -27,6 +27,7 @@ public:
 
   void do_sync();
   void do_upgrade();
+  void do_update_package();
   void do_install();
   void do_remove();
   void do_about();
@@ -94,6 +95,7 @@ private:
   static void cb_btn_refresh(GtkWidget *w, gpointer d);
   static void cb_btn_apply(GtkWidget *w, gpointer d);
   static void cb_popup_install(GtkWidget *w, gpointer d);
+  static void cb_popup_update(GtkWidget *w, gpointer d);
   static void cb_popup_remove(GtkWidget *w, gpointer d);
   static void cb_popup_unmark(GtkWidget *w, gpointer d);
   static void cb_category_selected(GtkListBox *box, GtkListBoxRow *row, gpointer d);

@@ -104,6 +104,9 @@ void MainWindow::cb_btn_apply(GtkWidget*, gpointer d) {
 void MainWindow::cb_popup_install(GtkWidget*, gpointer d) {
     static_cast<MainWindow*>(d)->do_install();
 }
+void MainWindow::cb_popup_update(GtkWidget*, gpointer d) {
+    static_cast<MainWindow*>(d)->do_update_package();
+}
 void MainWindow::cb_popup_remove(GtkWidget*, gpointer d) {
     static_cast<MainWindow*>(d)->do_remove();
 }

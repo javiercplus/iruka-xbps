@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iruka-xbps\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-23 21:48-0400\n"
+"POT-Creation-Date: 2026-11-13 21:56-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,7 +81,7 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:74 src/gui/main_window_ui.cpp:333
+#: src/gui/main_window_ui.cpp:74 src/gui/main_window_ui.cpp:337
 msgid "All packages"
 msgstr ""
 
@@ -89,7 +89,7 @@ msgstr ""
 msgid "Installed only"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:82 src/gui/main_window_ui.cpp:335
+#: src/gui/main_window_ui.cpp:82 src/gui/main_window_ui.cpp:339
 msgid "Not installed"
 msgstr ""
 
@@ -109,152 +109,157 @@ msgstr ""
 msgid "Mark for uninstall"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:107 src/gui/main_window_ui.cpp:407
+#: src/gui/main_window_ui.cpp:107 src/gui/main_window_ui.cpp:405
+msgid "Update package"
+msgstr ""
+
+#: src/gui/main_window_ui.cpp:111 src/gui/main_window_ui.cpp:415
 msgid "Unmark"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:113 src/gui/main_window_ui.cpp:253
+#: src/gui/main_window_ui.cpp:117 src/gui/main_window_ui.cpp:257
 msgid "Apply"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:117
+#: src/gui/main_window_ui.cpp:121
 msgid "Clear actions"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:123
+#: src/gui/main_window_ui.cpp:127
 msgid "Sync databases"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:127
+#: src/gui/main_window_ui.cpp:131
 msgid "System upgrade"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:134
+#: src/gui/main_window_ui.cpp:138
 msgid "Options"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:137 src/gui/repository_editor.cpp:64
+#: src/gui/main_window_ui.cpp:141 src/gui/repository_editor.cpp:81
 msgid "Repositories"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:142
+#: src/gui/main_window_ui.cpp:146
 msgid "Language"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:145
+#: src/gui/main_window_ui.cpp:149
 msgid "System (default)"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:151
+#: src/gui/main_window_ui.cpp:155
 msgid "English"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:157
+#: src/gui/main_window_ui.cpp:161
 msgid "Español"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:163
+#: src/gui/main_window_ui.cpp:167
 msgid "Русский"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:169
+#: src/gui/main_window_ui.cpp:173
 msgid "日本語"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:175
+#: src/gui/main_window_ui.cpp:179
 msgid "Magyar"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:215
+#: src/gui/main_window_ui.cpp:219
 msgid "Help"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:218
+#: src/gui/main_window_ui.cpp:222
 msgid "About"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:245
+#: src/gui/main_window_ui.cpp:249
 msgid "Update"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:247
+#: src/gui/main_window_ui.cpp:251
 msgid "Upgrade all system packages"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:249
+#: src/gui/main_window_ui.cpp:253
 msgid "Refresh"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:251
+#: src/gui/main_window_ui.cpp:255
 msgid "Refresh package list"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:255
+#: src/gui/main_window_ui.cpp:259
 msgid "Apply pending transaction"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:296
+#: src/gui/main_window_ui.cpp:300
 msgid "Name"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:304
+#: src/gui/main_window_ui.cpp:308
 msgid "Version"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:312
+#: src/gui/main_window_ui.cpp:316
 msgid "Description"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:334
+#: src/gui/main_window_ui.cpp:338
 msgid "Installed"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:336
+#: src/gui/main_window_ui.cpp:340
 msgid "Outdated"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:338
+#: src/gui/main_window_ui.cpp:342
 msgid "Categories"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:397
+#: src/gui/main_window_ui.cpp:401
 msgid "Install"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:401
+#: src/gui/main_window_ui.cpp:409
 msgid "Remove"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:433
+#: src/gui/main_window_ui.cpp:441
 msgid "Info"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:448
+#: src/gui/main_window_ui.cpp:456
 msgid "Files"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:464
+#: src/gui/main_window_ui.cpp:472
 msgid "Size"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:471
+#: src/gui/main_window_ui.cpp:479
 msgid "Op"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:473
+#: src/gui/main_window_ui.cpp:481
 msgid "Package"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:485
+#: src/gui/main_window_ui.cpp:493
 msgid "Transaction"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:519
+#: src/gui/main_window_ui.cpp:527
 msgid "Show details"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:539 src/gui/main_window_exec.cpp:22
-#: src/gui/repository_editor.cpp:151
+#: src/gui/main_window_ui.cpp:547 src/gui/main_window_exec.cpp:22
+#: src/gui/main_window_exec.cpp:44 src/gui/repository_editor.cpp:49
+#: src/gui/repository_editor.cpp:168
 msgid "Cancel"
 msgstr ""
 
@@ -266,34 +271,42 @@ msgstr ""
 msgid "Upgrading system..."
 msgstr ""
 
-#: src/gui/main_window_actions.cpp:59
-msgid "Please select a package to install."
+#: src/gui/main_window_actions.cpp:61
+msgid "Please select a package to update."
 msgstr ""
 
-#: src/gui/main_window_actions.cpp:73
-msgid "Package is already installed."
-msgstr ""
-
-#: src/gui/main_window_actions.cpp:87
-msgid "Please select a package to remove."
-msgstr ""
-
-#: src/gui/main_window_actions.cpp:101
+#: src/gui/main_window_actions.cpp:75 src/gui/main_window_actions.cpp:135
 msgid "Package is not installed."
 msgstr ""
 
-#: src/gui/main_window_actions.cpp:109
+#: src/gui/main_window_actions.cpp:83
+msgid "Updating package..."
+msgstr ""
+
+#: src/gui/main_window_actions.cpp:93
+msgid "Please select a package to install."
+msgstr ""
+
+#: src/gui/main_window_actions.cpp:107
+msgid "Package is already installed."
+msgstr ""
+
+#: src/gui/main_window_actions.cpp:121
+msgid "Please select a package to remove."
+msgstr ""
+
+#: src/gui/main_window_actions.cpp:143
 #, c-format
 msgid "Cannot remove protected package: %s"
 msgstr ""
 
-#: src/gui/main_window_actions.cpp:133
+#: src/gui/main_window_actions.cpp:167
 msgid ""
 "A graphical package manager for XBPS.\n"
 "Built with GTK3."
 msgstr ""
 
-#: src/gui/main_window_actions.cpp:139
+#: src/gui/main_window_actions.cpp:173
 msgid ""
 "GUI: WTFPL\n"
 "Core/backend: BSD 3-Clause\n"
@@ -301,7 +314,7 @@ msgid ""
 "Copyright (C) 2026 JavierC"
 msgstr ""
 
-#: src/gui/main_window_actions.cpp:151
+#: src/gui/main_window_actions.cpp:185
 msgid "Cannot change the language while an operation is running."
 msgstr ""
 
@@ -328,7 +341,7 @@ msgstr ""
 msgid "Version:"
 msgstr ""
 
-#: src/gui/main_window_packages.cpp:202 src/gui/repository_editor.cpp:167
+#: src/gui/main_window_packages.cpp:202 src/gui/repository_editor.cpp:184
 msgid "Repository:"
 msgstr ""
 
@@ -416,7 +429,8 @@ msgstr ""
 msgid "Remove: "
 msgstr ""
 
-#: src/gui/main_window_transaction.cpp:115 src/gui/main_window_exec.cpp:56
+#: src/gui/main_window_transaction.cpp:115 src/gui/main_window_exec.cpp:23
+#: src/gui/main_window_exec.cpp:78 src/gui/repository_editor.cpp:50
 msgid "OK"
 msgstr ""
 
@@ -428,51 +442,58 @@ msgstr ""
 msgid "Removing packages..."
 msgstr ""
 
-#: src/gui/main_window_exec.cpp:42
+#: src/gui/main_window_exec.cpp:20 src/gui/repository_editor.cpp:47
+msgid ""
+"This operation requires pkexec permissions.\n"
+"\n"
+"Press OK to authenticate. The privileged helper will be restarted."
+msgstr ""
+
+#: src/gui/main_window_exec.cpp:64
 #, c-format
 msgid ""
 "=== %s ===\n"
 "\n"
 msgstr ""
 
-#: src/gui/main_window_exec.cpp:115
+#: src/gui/main_window_exec.cpp:137
 msgid "Error: privileged helper is not available.\n"
 msgstr ""
 
-#: src/gui/repository_editor.cpp:79 src/gui/repository_editor.cpp:149
+#: src/gui/repository_editor.cpp:96 src/gui/repository_editor.cpp:166
 msgid "Add repository"
 msgstr ""
 
-#: src/gui/repository_editor.cpp:84
+#: src/gui/repository_editor.cpp:101
 msgid "Delete selected repository"
 msgstr ""
 
-#: src/gui/repository_editor.cpp:88
+#: src/gui/repository_editor.cpp:105
 msgid "Save"
 msgstr ""
 
-#: src/gui/repository_editor.cpp:89
+#: src/gui/repository_editor.cpp:106
 msgid "Save repositories (requires root)"
 msgstr ""
 
-#: src/gui/repository_editor.cpp:152
+#: src/gui/repository_editor.cpp:169
 msgid "Add"
 msgstr ""
 
-#: src/gui/repository_editor.cpp:165
+#: src/gui/repository_editor.cpp:182
 msgid "File name:"
 msgstr ""
 
-#: src/gui/repository_editor.cpp:188
+#: src/gui/repository_editor.cpp:205
 #, c-format
 msgid "A file named '%s' already exists."
 msgstr ""
 
-#: src/gui/repository_editor.cpp:198
+#: src/gui/repository_editor.cpp:215
 msgid "The repository URL cannot be empty."
 msgstr ""
 
-#: src/gui/repository_editor.cpp:217
+#: src/gui/repository_editor.cpp:234
 #, c-format
 msgid ""
 "Delete repository '%s'?\n"
@@ -480,22 +501,22 @@ msgid ""
 "This will run: rm -f /etc/xbps.d/%s"
 msgstr ""
 
-#: src/gui/repository_editor.cpp:219
+#: src/gui/repository_editor.cpp:236
 msgid "Delete"
 msgstr ""
 
-#: src/gui/repository_editor.cpp:252
+#: src/gui/repository_editor.cpp:271
 msgid "Failed to delete repository."
 msgstr ""
 
-#: src/gui/repository_editor.cpp:264
+#: src/gui/repository_editor.cpp:283
 msgid "No repositories to save."
 msgstr ""
 
-#: src/gui/repository_editor.cpp:312
+#: src/gui/repository_editor.cpp:333
 msgid "Repositories saved successfully."
 msgstr ""
 
-#: src/gui/repository_editor.cpp:314
+#: src/gui/repository_editor.cpp:335
 msgid "Failed to save repositories."
 msgstr ""

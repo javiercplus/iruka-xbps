@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iruka-xbps 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-23 21:48-0400\n"
+"POT-Creation-Date: 2026-11-13 21:56-0400\n"
 "PO-Revision-Date: 2026-10-20 20:15+0200\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
@@ -81,7 +81,7 @@ msgstr "Egyéb"
 msgid "View"
 msgstr "Nézet"
 
-#: src/gui/main_window_ui.cpp:74 src/gui/main_window_ui.cpp:333
+#: src/gui/main_window_ui.cpp:74 src/gui/main_window_ui.cpp:337
 msgid "All packages"
 msgstr "Összes csomag"
 
@@ -89,7 +89,7 @@ msgstr "Összes csomag"
 msgid "Installed only"
 msgstr "Csak a telepített csomagok"
 
-#: src/gui/main_window_ui.cpp:82 src/gui/main_window_ui.cpp:335
+#: src/gui/main_window_ui.cpp:82 src/gui/main_window_ui.cpp:339
 msgid "Not installed"
 msgstr "Nem telepített csomagok"
 
@@ -109,152 +109,157 @@ msgstr "Megjelölés telepítésre"
 msgid "Mark for uninstall"
 msgstr "Megjelölés eltávolításra"
 
-#: src/gui/main_window_ui.cpp:107 src/gui/main_window_ui.cpp:407
+#: src/gui/main_window_ui.cpp:107 src/gui/main_window_ui.cpp:405
+msgid "Update package"
+msgstr "Csomag frissítése"
+
+#: src/gui/main_window_ui.cpp:111 src/gui/main_window_ui.cpp:415
 msgid "Unmark"
 msgstr "Jelölés törlése"
 
-#: src/gui/main_window_ui.cpp:113 src/gui/main_window_ui.cpp:253
+#: src/gui/main_window_ui.cpp:117 src/gui/main_window_ui.cpp:257
 msgid "Apply"
 msgstr "Alkalmaz"
 
-#: src/gui/main_window_ui.cpp:117
+#: src/gui/main_window_ui.cpp:121
 msgid "Clear actions"
 msgstr "Műveletek törlése"
 
-#: src/gui/main_window_ui.cpp:123
+#: src/gui/main_window_ui.cpp:127
 msgid "Sync databases"
 msgstr "Adatbázisok szinkronizálása"
 
-#: src/gui/main_window_ui.cpp:127
+#: src/gui/main_window_ui.cpp:131
 msgid "System upgrade"
 msgstr "Rendszer frissítése"
 
-#: src/gui/main_window_ui.cpp:134
+#: src/gui/main_window_ui.cpp:138
 msgid "Options"
 msgstr "Beállítások"
 
-#: src/gui/main_window_ui.cpp:137 src/gui/repository_editor.cpp:64
+#: src/gui/main_window_ui.cpp:141 src/gui/repository_editor.cpp:81
 msgid "Repositories"
 msgstr "Tárolók"
 
-#: src/gui/main_window_ui.cpp:142
+#: src/gui/main_window_ui.cpp:146
 msgid "Language"
 msgstr "Nyelv"
 
-#: src/gui/main_window_ui.cpp:145
+#: src/gui/main_window_ui.cpp:149
 msgid "System (default)"
 msgstr "Rendszer alapértelmezett nyelve"
 
-#: src/gui/main_window_ui.cpp:151
+#: src/gui/main_window_ui.cpp:155
 msgid "English"
 msgstr "Angol"
 
-#: src/gui/main_window_ui.cpp:157
+#: src/gui/main_window_ui.cpp:161
 msgid "Español"
 msgstr "Spanyol"
 
-#: src/gui/main_window_ui.cpp:163
+#: src/gui/main_window_ui.cpp:167
 msgid "Русский"
 msgstr "Orosz"
 
-#: src/gui/main_window_ui.cpp:169
+#: src/gui/main_window_ui.cpp:173
 msgid "日本語"
 msgstr "Japán"
 
-#: src/gui/main_window_ui.cpp:175
+#: src/gui/main_window_ui.cpp:179
 msgid "Magyar"
 msgstr "Magyar"
 
-#: src/gui/main_window_ui.cpp:215
+#: src/gui/main_window_ui.cpp:219
 msgid "Help"
 msgstr "Súgó"
 
-#: src/gui/main_window_ui.cpp:218
+#: src/gui/main_window_ui.cpp:222
 msgid "About"
 msgstr "Névjegy"
 
-#: src/gui/main_window_ui.cpp:245
+#: src/gui/main_window_ui.cpp:249
 msgid "Update"
 msgstr "Frissítés"
 
-#: src/gui/main_window_ui.cpp:247
+#: src/gui/main_window_ui.cpp:251
 msgid "Upgrade all system packages"
 msgstr "Az összes rendszercsomag frissítése"
 
-#: src/gui/main_window_ui.cpp:249
+#: src/gui/main_window_ui.cpp:253
 msgid "Refresh"
 msgstr "Lista frissítése"
 
-#: src/gui/main_window_ui.cpp:251
+#: src/gui/main_window_ui.cpp:255
 msgid "Refresh package list"
 msgstr "Csomaglista frissítése"
 
-#: src/gui/main_window_ui.cpp:255
+#: src/gui/main_window_ui.cpp:259
 msgid "Apply pending transaction"
 msgstr "Függőben lévő műveletek végrehajtása"
 
-#: src/gui/main_window_ui.cpp:296
+#: src/gui/main_window_ui.cpp:300
 msgid "Name"
 msgstr "Név"
 
-#: src/gui/main_window_ui.cpp:304
+#: src/gui/main_window_ui.cpp:308
 msgid "Version"
 msgstr "Verzió"
 
-#: src/gui/main_window_ui.cpp:312
+#: src/gui/main_window_ui.cpp:316
 msgid "Description"
 msgstr "Leírás"
 
-#: src/gui/main_window_ui.cpp:334
+#: src/gui/main_window_ui.cpp:338
 msgid "Installed"
 msgstr "Telepítve"
 
-#: src/gui/main_window_ui.cpp:336
+#: src/gui/main_window_ui.cpp:340
 msgid "Outdated"
 msgstr "Elavult"
 
-#: src/gui/main_window_ui.cpp:338
+#: src/gui/main_window_ui.cpp:342
 msgid "Categories"
 msgstr "Kategóriák"
 
-#: src/gui/main_window_ui.cpp:397
+#: src/gui/main_window_ui.cpp:401
 msgid "Install"
 msgstr "Telepítés"
 
-#: src/gui/main_window_ui.cpp:401
+#: src/gui/main_window_ui.cpp:409
 msgid "Remove"
 msgstr "Eltávolítás"
 
-#: src/gui/main_window_ui.cpp:433
+#: src/gui/main_window_ui.cpp:441
 msgid "Info"
 msgstr "Információ"
 
-#: src/gui/main_window_ui.cpp:448
+#: src/gui/main_window_ui.cpp:456
 msgid "Files"
 msgstr "Fájlok"
 
-#: src/gui/main_window_ui.cpp:464
+#: src/gui/main_window_ui.cpp:472
 msgid "Size"
 msgstr "Méret"
 
-#: src/gui/main_window_ui.cpp:471
+#: src/gui/main_window_ui.cpp:479
 msgid "Op"
 msgstr "Művelet"
 
-#: src/gui/main_window_ui.cpp:473
+#: src/gui/main_window_ui.cpp:481
 msgid "Package"
 msgstr "Csomag"
 
-#: src/gui/main_window_ui.cpp:485
+#: src/gui/main_window_ui.cpp:493
 msgid "Transaction"
 msgstr "Műveletek"
 
-#: src/gui/main_window_ui.cpp:519
+#: src/gui/main_window_ui.cpp:527
 msgid "Show details"
 msgstr "Részletek megjelenítése"
 
-#: src/gui/main_window_ui.cpp:539 src/gui/main_window_exec.cpp:22
-#: src/gui/repository_editor.cpp:151
+#: src/gui/main_window_ui.cpp:547 src/gui/main_window_exec.cpp:22
+#: src/gui/main_window_exec.cpp:44 src/gui/repository_editor.cpp:49
+#: src/gui/repository_editor.cpp:168
 msgid "Cancel"
 msgstr "Mégse"
 
@@ -266,28 +271,36 @@ msgstr "Csomagadatbázisok szinkronizálása..."
 msgid "Upgrading system..."
 msgstr "Rendszer frissítése..."
 
-#: src/gui/main_window_actions.cpp:59
-msgid "Please select a package to install."
-msgstr "Válassz ki egy telepítendő csomagot."
+#: src/gui/main_window_actions.cpp:61
+msgid "Please select a package to update."
+msgstr "Válassz ki egy frissítendő csomagot."
 
-#: src/gui/main_window_actions.cpp:73
-msgid "Package is already installed."
-msgstr "A csomag már telepítve van."
-
-#: src/gui/main_window_actions.cpp:87
-msgid "Please select a package to remove."
-msgstr "Válassz ki egy eltávolítandó csomagot."
-
-#: src/gui/main_window_actions.cpp:101
+#: src/gui/main_window_actions.cpp:75 src/gui/main_window_actions.cpp:135
 msgid "Package is not installed."
 msgstr "A csomag nincs telepítve."
 
-#: src/gui/main_window_actions.cpp:109
+#: src/gui/main_window_actions.cpp:83
+msgid "Updating package..."
+msgstr "Csomag frissítése..."
+
+#: src/gui/main_window_actions.cpp:93
+msgid "Please select a package to install."
+msgstr "Válassz ki egy telepítendő csomagot."
+
+#: src/gui/main_window_actions.cpp:107
+msgid "Package is already installed."
+msgstr "A csomag már telepítve van."
+
+#: src/gui/main_window_actions.cpp:121
+msgid "Please select a package to remove."
+msgstr "Válassz ki egy eltávolítandó csomagot."
+
+#: src/gui/main_window_actions.cpp:143
 #, c-format
 msgid "Cannot remove protected package: %s"
 msgstr "A védett csomag nem távolítható el: %s"
 
-#: src/gui/main_window_actions.cpp:133
+#: src/gui/main_window_actions.cpp:167
 msgid ""
 "A graphical package manager for XBPS.\n"
 "Built with GTK3."
@@ -295,7 +308,7 @@ msgstr ""
 "Grafikus csomagkezelő az XBPS-hez.\n"
 "GTK3-mal készült."
 
-#: src/gui/main_window_actions.cpp:139
+#: src/gui/main_window_actions.cpp:173
 msgid ""
 "GUI: WTFPL\n"
 "Core/backend: BSD 3-Clause\n"
@@ -307,7 +320,7 @@ msgstr ""
 "\n"
 "Szerzői jog (C) 2026 JavierC"
 
-#: src/gui/main_window_actions.cpp:151
+#: src/gui/main_window_actions.cpp:185
 msgid "Cannot change the language while an operation is running."
 msgstr "Folyamatban lévő művelet közben nem lehet nyelvet váltani."
 
@@ -334,7 +347,7 @@ msgstr "Név:"
 msgid "Version:"
 msgstr "Verzió:"
 
-#: src/gui/main_window_packages.cpp:202 src/gui/repository_editor.cpp:167
+#: src/gui/main_window_packages.cpp:202 src/gui/repository_editor.cpp:184
 msgid "Repository:"
 msgstr "Tároló:"
 
@@ -422,7 +435,8 @@ msgstr "Telepítés: "
 msgid "Remove: "
 msgstr "Eltávolítás: "
 
-#: src/gui/main_window_transaction.cpp:115 src/gui/main_window_exec.cpp:56
+#: src/gui/main_window_transaction.cpp:115 src/gui/main_window_exec.cpp:23
+#: src/gui/main_window_exec.cpp:78 src/gui/repository_editor.cpp:50
 msgid "OK"
 msgstr "OK"
 
@@ -434,7 +448,17 @@ msgstr "Csomagok telepítése..."
 msgid "Removing packages..."
 msgstr "Csomagok eltávolítása..."
 
-#: src/gui/main_window_exec.cpp:42
+#: src/gui/main_window_exec.cpp:20 src/gui/repository_editor.cpp:47
+msgid ""
+"This operation requires pkexec permissions.\n"
+"\n"
+"Press OK to authenticate. The privileged helper will be restarted."
+msgstr ""
+"Ehhez a művelethez pkexec jogosultságok szükségesek.\n"
+"\n"
+"Nyomj OK gombot a hitelesítéshez. A kiemelt segéd újraindul."
+
+#: src/gui/main_window_exec.cpp:64
 #, c-format
 msgid ""
 "=== %s ===\n"
@@ -443,44 +467,44 @@ msgstr ""
 "=== %s ===\n"
 "\n"
 
-#: src/gui/main_window_exec.cpp:115
+#: src/gui/main_window_exec.cpp:137
 msgid "Error: privileged helper is not available.\n"
 msgstr "Hiba: a privilegizált segédprogram nem érhető el.\n"
 
-#: src/gui/repository_editor.cpp:79 src/gui/repository_editor.cpp:149
+#: src/gui/repository_editor.cpp:96 src/gui/repository_editor.cpp:166
 msgid "Add repository"
 msgstr "Tároló hozzáadása"
 
-#: src/gui/repository_editor.cpp:84
+#: src/gui/repository_editor.cpp:101
 msgid "Delete selected repository"
 msgstr "Kijelölt tároló törlése"
 
-#: src/gui/repository_editor.cpp:88
+#: src/gui/repository_editor.cpp:105
 msgid "Save"
 msgstr "Mentés"
 
-#: src/gui/repository_editor.cpp:89
+#: src/gui/repository_editor.cpp:106
 msgid "Save repositories (requires root)"
 msgstr "Tárolók mentése (rendszergazdai jogosultság szükséges)"
 
-#: src/gui/repository_editor.cpp:152
+#: src/gui/repository_editor.cpp:169
 msgid "Add"
 msgstr "Hozzáadás"
 
-#: src/gui/repository_editor.cpp:165
+#: src/gui/repository_editor.cpp:182
 msgid "File name:"
 msgstr "Fájlnév:"
 
-#: src/gui/repository_editor.cpp:188
+#: src/gui/repository_editor.cpp:205
 #, c-format
 msgid "A file named '%s' already exists."
 msgstr "Már létezik „%s” nevű fájl."
 
-#: src/gui/repository_editor.cpp:198
+#: src/gui/repository_editor.cpp:215
 msgid "The repository URL cannot be empty."
 msgstr "A tároló URL-címe nem lehet üres."
 
-#: src/gui/repository_editor.cpp:217
+#: src/gui/repository_editor.cpp:234
 #, c-format
 msgid ""
 "Delete repository '%s'?\n"
@@ -491,23 +515,23 @@ msgstr ""
 "\n"
 "A következő parancs fog lefutni: rm -f /etc/xbps.d/%s"
 
-#: src/gui/repository_editor.cpp:219
+#: src/gui/repository_editor.cpp:236
 msgid "Delete"
 msgstr "Törlés"
 
-#: src/gui/repository_editor.cpp:252
+#: src/gui/repository_editor.cpp:271
 msgid "Failed to delete repository."
 msgstr "Nem sikerült törölni a tárolót."
 
-#: src/gui/repository_editor.cpp:264
+#: src/gui/repository_editor.cpp:283
 msgid "No repositories to save."
 msgstr "Nincs mentendő tároló."
 
-#: src/gui/repository_editor.cpp:312
+#: src/gui/repository_editor.cpp:333
 msgid "Repositories saved successfully."
 msgstr "A tárolók mentése sikerült."
 
-#: src/gui/repository_editor.cpp:314
+#: src/gui/repository_editor.cpp:335
 msgid "Failed to save repositories."
 msgstr "Nem sikerült menteni a tárolókat."
 

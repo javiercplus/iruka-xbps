@@ -104,6 +104,10 @@ void MainWindow::buildMenuBar() {
     g_signal_connect(markUninstallItem, "activate", G_CALLBACK(cb_popup_remove), this);
     gtk_menu_shell_append(GTK_MENU_SHELL(txMenu), markUninstallItem);
 
+    GtkWidget *updatePkgItem = gtk_menu_item_new_with_label(_("Update package"));
+    g_signal_connect(updatePkgItem, "activate", G_CALLBACK(cb_popup_update), this);
+    gtk_menu_shell_append(GTK_MENU_SHELL(txMenu), updatePkgItem);
+
     GtkWidget *unmarkItem = gtk_menu_item_new_with_label(_("Unmark"));
     g_signal_connect(unmarkItem, "activate", G_CALLBACK(cb_popup_unmark), this);
     gtk_menu_shell_append(GTK_MENU_SHELL(txMenu), unmarkItem);
@@ -397,6 +401,10 @@ void MainWindow::buildPopupMenu() {
     GtkWidget *installItem = gtk_menu_item_new_with_label(_("Install"));
     g_signal_connect(installItem, "activate", G_CALLBACK(cb_popup_install), this);
     gtk_menu_shell_append(GTK_MENU_SHELL(m_popupMenu), installItem);
+
+    GtkWidget *updateItem = gtk_menu_item_new_with_label(_("Update package"));
+    g_signal_connect(updateItem, "activate", G_CALLBACK(cb_popup_update), this);
+    gtk_menu_shell_append(GTK_MENU_SHELL(m_popupMenu), updateItem);
 
     GtkWidget *removeItem = gtk_menu_item_new_with_label(_("Remove"));
     g_signal_connect(removeItem, "activate", G_CALLBACK(cb_popup_remove), this);

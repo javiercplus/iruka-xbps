@@ -50,6 +50,40 @@ void MainWindow::do_upgrade() {
     runCommandQueue();
 }
 
+void MainWindow::do_update_package() {
+    if (m_transactionRunning) return;
+
+    GtkTreeIter  iter;
+    GtkTreeModel *model = GTK_TREE_MODEL(m_listStore);
+    if (!gtk_tree_selection_get_selected(m_selection, &model, &iter)) {
+        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(m_window),
+            GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
+            _("Please select a package to update."));
+        g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), nullptr);
+        gtk_widget_show(dialog);
+        return;
+    }
+
+    gpointer ptr = nullptr;
+    gtk_tree_model_get(model, &iter, COL_PKG_PTR, &ptr, -1);
+    if (!ptr) return;
+
+    auto *pkg = static_cast<PackageRepository::PackageData*>(ptr);
+    if (!pkg->installed()) {
+        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(m_window),
+            GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
+            _("Package is not installed."));
+        g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), nullptr);
+        gtk_widget_show(dialog);
+        return;
+    }
+
+    m_commandQueue.clear();
+    m_commandQueue.push_back({{ XBPS_INSTALL_BIN, "-Syu", pkg->name },
+                              _("Updating package...")});
+    runCommandQueue();
+}
+
 void MainWindow::do_install() {
     GtkTreeIter  iter;
     GtkTreeModel *model = GTK_TREE_MODEL(m_listStore);

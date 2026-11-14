@@ -14,8 +14,30 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
+static bool confirmPkexecPrivileges(GtkWindow *parent) {
+    GtkWidget *dialog = gtk_message_dialog_new(parent, GTK_DIALOG_MODAL,
+        GTK_MESSAGE_WARNING, GTK_BUTTONS_NONE,
+        "%s", _("This operation requires pkexec permissions.\n\n"
+                "Press OK to authenticate. The privileged helper will be restarted."));
+    gtk_dialog_add_button(GTK_DIALOG(dialog), _("Cancel"), GTK_RESPONSE_CANCEL);
+    gtk_dialog_add_button(GTK_DIALOG(dialog), _("OK"), GTK_RESPONSE_ACCEPT);
+    gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+
+    if (response != GTK_RESPONSE_ACCEPT) return false;
+
+    PrivilegedDaemon::instance().stop();
+    PrivilegedDaemon::instance().start();
+    return true;
+}
+
 void MainWindow::runCommandQueue() {
     if (m_commandQueue.empty() || m_transactionRunning) return;
+
+    if (!confirmPkexecPrivileges(GTK_WINDOW(m_window))) {
+        m_commandQueue.clear();
+        return;
+    }
 
     m_cancelRequested.store(false);
     m_activeChild.store(0);
