@@ -1,19 +1,18 @@
-# Template file for 'iruka-xbps'
 pkgname=iruka-xbps
-version=0.1.0
-revision=3
+version=0.2.0
+revision=4
 build_style=meson
-# gettext is required by the meson i18n module to compile the .mo catalogs
-# (msgfmt/xgettext/msgmerge/msginit); without it the translations are missing.
-hostmakedepends="pkg-config gettext"
-makedepends="gtk+3-devel"
+hostmakedepends="git pkg-config gettext"
+makedepends="git gtk+3-devel"
 depends="polkit"
 short_desc="Graphical front-end for the XBPS package manager"
 maintainer="JavierC <<www.javierc.online>>"
 license="WTFPL, BSD-3-Clause"
 homepage="https://github.com/javiercplus/iruka-xbps"
-distfiles="https://github.com/javiercplus/iruka-xbps/releases/download/${version}/iruka-xbps-main.tar.gz"
-checksum="d9ef83a7586d35e4ef7faf72cf5e86dfb36825800f60b4b483445884b1d945ae"
+
+do_fetch(){
+git clone --depth 1 https://github.com/javiercplus/iruka-xbps.git "${pkgname}-${version}"
+}
 
 post_install() {
     vlicense LICENSE
