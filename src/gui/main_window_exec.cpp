@@ -2,6 +2,7 @@
 #include "constants.h"
 #include "i18n.h"
 #include "privileged_daemon.h"
+#include "window_utils.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
@@ -19,6 +20,11 @@
 void MainWindow::runCommandQueue() {
     if (m_commandQueue.empty() || m_transactionRunning) return;
 
+    if (!gui_utils::requestPkexecPrivileges()) {
+        m_commandQueue.clear();
+        return;
+    }
+
     m_cancelRequested.store(false);
     m_activeChild.store(0);
     m_progressButton->label(_("Cancel"));
@@ -27,35 +33,7 @@ void MainWindow::runCommandQueue() {
 
     m_progressBuffer->text("");
 
-    // Centre the progress window over the main window, clamped to the
-    // visible work area, and make sure it is mapped and raised before the
-    // privileged command starts.
-    if (m_window) {
-        int px = m_window->x() + (m_window->w() - m_progressDialog->w()) / 2;
-        int py = m_window->y() + (m_window->h() - m_progressDialog->h()) / 2;
-
-        int sx = 0, sy = 0, sw = 0, sh = 0;
-        Fl::screen_work_area(sx, sy, sw, sh,
-                             px + m_progressDialog->w() / 2,
-                             py + m_progressDialog->h() / 2);
-        if (sw > m_progressDialog->w()) {
-            if (px < sx) px = sx;
-            if (px + m_progressDialog->w() > sx + sw)
-                px = sx + sw - m_progressDialog->w();
-        } else {
-            px = sx;
-        }
-        if (sh > m_progressDialog->h()) {
-            if (py < sy) py = sy;
-            if (py + m_progressDialog->h() > sy + sh)
-                py = sy + sh - m_progressDialog->h();
-        } else {
-            py = sy;
-        }
-        m_progressDialog->position(px, py);
-    }
-    m_progressDialog->show();
-    m_progressDialog->take_focus();
+    gui_utils::showCentered(m_progressDialog, m_window);
 
     startNextCommand();
 }

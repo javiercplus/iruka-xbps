@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iruka-xbps 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-23 21:48-0400\n"
+"POT-Creation-Date: 2026-11-13 21:29-0400\n"
 "PO-Revision-Date: 2026-10-23 21:00-0400\n"
 "Last-Translator: Iruka-xbps contributors\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -12,11 +12,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/main.cpp:38
+#: src/main.cpp:40
 msgid "Error: xbps-query not found at "
 msgstr "エラー: xbps-query が次の場所に見つかりません: "
 
-#: src/main.cpp:42
+#: src/main.cpp:44
 msgid "Warning: pkexec not found. Privileged operations may not work."
 msgstr "警告: pkexec が見つかりません。特権操作が動作しない可能性があります。"
 
@@ -72,217 +72,210 @@ msgstr "ユーティリティ"
 msgid "Other"
 msgstr "その他"
 
-#: src/gui/main_window_ui.cpp:71
+#: src/gui/main_window_ui.cpp:53
 msgid "View"
 msgstr "表示"
 
-#: src/gui/main_window_ui.cpp:74 src/gui/main_window_ui.cpp:333
+#: src/gui/main_window_ui.cpp:54 src/gui/main_window_ui.cpp:160
 msgid "All packages"
 msgstr "すべてのパッケージ"
 
-#: src/gui/main_window_ui.cpp:78
+#: src/gui/main_window_ui.cpp:55
 msgid "Installed only"
 msgstr "インストール済みのみ"
 
-#: src/gui/main_window_ui.cpp:82 src/gui/main_window_ui.cpp:335
+#: src/gui/main_window_ui.cpp:56 src/gui/main_window_ui.cpp:162
 msgid "Not installed"
 msgstr "未インストール"
 
-#: src/gui/main_window_ui.cpp:88
+#: src/gui/main_window_ui.cpp:57 src/gui/main_window_ui.cpp:323
 msgid "Show details panel"
 msgstr "詳細パネルを表示"
 
-#: src/gui/main_window_ui.cpp:96
+#: src/gui/main_window_ui.cpp:61
 msgid "Packages"
 msgstr "パッケージ"
 
-#: src/gui/main_window_ui.cpp:99
+#: src/gui/main_window_ui.cpp:62
 msgid "Mark for install"
 msgstr "インストール対象にする"
 
-#: src/gui/main_window_ui.cpp:103
+#: src/gui/main_window_ui.cpp:63
 msgid "Mark for uninstall"
 msgstr "アンインストール対象にする"
 
-#: src/gui/main_window_ui.cpp:107 src/gui/main_window_ui.cpp:407
+#: src/gui/main_window_ui.cpp:64 src/gui/main_window_ui.cpp:138
+msgid "Update package"
+msgstr "パッケージを更新"
+
+#: src/gui/main_window_ui.cpp:65 src/gui/main_window_ui.cpp:140
 msgid "Unmark"
 msgstr "マークを解除"
 
-#: src/gui/main_window_ui.cpp:113 src/gui/main_window_ui.cpp:253
+#: src/gui/main_window_ui.cpp:66 src/gui/main_window_ui.cpp:106
 msgid "Apply"
 msgstr "適用"
 
-#: src/gui/main_window_ui.cpp:117
+#: src/gui/main_window_ui.cpp:67
 msgid "Clear actions"
 msgstr "操作をクリア"
 
-#: src/gui/main_window_ui.cpp:123
+#: src/gui/main_window_ui.cpp:68
 msgid "Sync databases"
 msgstr "データベースを同期"
 
-#: src/gui/main_window_ui.cpp:127
+#: src/gui/main_window_ui.cpp:69
 msgid "System upgrade"
 msgstr "システムをアップグレード"
 
-#: src/gui/main_window_ui.cpp:134
+#: src/gui/main_window_ui.cpp:71
 msgid "Options"
 msgstr "オプション"
 
-#: src/gui/main_window_ui.cpp:137 src/gui/repository_editor.cpp:64
+#: src/gui/main_window_ui.cpp:72 src/gui/repository_editor.cpp:144
 msgid "Repositories"
 msgstr "リポジトリ"
 
-#: src/gui/main_window_ui.cpp:142
+#: src/gui/main_window_ui.cpp:73
 msgid "Language"
 msgstr "言語"
 
-#: src/gui/main_window_ui.cpp:145
+#: src/gui/main_window_ui.cpp:74
 msgid "System (default)"
 msgstr "システム (既定)"
 
-#: src/gui/main_window_ui.cpp:151
+#: src/gui/main_window_ui.cpp:76
 msgid "English"
 msgstr "英語"
 
-#: src/gui/main_window_ui.cpp:157
-msgid "Español"
-msgstr "スペイン語"
+#: src/gui/main_window_ui.cpp:78
+msgid "Éspanol"
+msgstr ""
 
-#: src/gui/main_window_ui.cpp:163
+#: src/gui/main_window_ui.cpp:80
 msgid "Русский"
 msgstr "ロシア語"
 
-#: src/gui/main_window_ui.cpp:169
+#: src/gui/main_window_ui.cpp:82
 msgid "日本語"
 msgstr "日本語"
 
-#: src/gui/main_window_ui.cpp:175
+#: src/gui/main_window_ui.cpp:84
 msgid "Magyar"
 msgstr "ハンガリー語"
 
-#: src/gui/main_window_ui.cpp:215
+#: src/gui/main_window_ui.cpp:88
 msgid "Help"
 msgstr "ヘルプ"
 
-#: src/gui/main_window_ui.cpp:218
+#: src/gui/main_window_ui.cpp:89 src/gui/main_window_actions.cpp:129
 msgid "About"
 msgstr "バージョン情報"
 
-#: src/gui/main_window_ui.cpp:245
+#: src/gui/main_window_ui.cpp:98
 msgid "Update"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:247
+#: src/gui/main_window_ui.cpp:99
 msgid "Upgrade all system packages"
 msgstr "システムの全パッケージをアップグレード"
 
-#: src/gui/main_window_ui.cpp:249
+#: src/gui/main_window_ui.cpp:102
 msgid "Refresh"
 msgstr ""
 
-#: src/gui/main_window_ui.cpp:251
+#: src/gui/main_window_ui.cpp:103
 msgid "Refresh package list"
 msgstr "パッケージ一覧を更新"
 
-#: src/gui/main_window_ui.cpp:255
+#: src/gui/main_window_ui.cpp:107
 msgid "Apply pending transaction"
 msgstr "保留中の操作を適用"
 
-#: src/gui/main_window_ui.cpp:296
-msgid "Name"
-msgstr "名前"
-
-#: src/gui/main_window_ui.cpp:304
-msgid "Version"
-msgstr "バージョン"
-
-#: src/gui/main_window_ui.cpp:312
-msgid "Description"
-msgstr "説明"
-
-#: src/gui/main_window_ui.cpp:334
-msgid "Installed"
-msgstr "インストール済み"
-
-#: src/gui/main_window_ui.cpp:336
-msgid "Outdated"
-msgstr "更新可能"
-
-#: src/gui/main_window_ui.cpp:338
-msgid "Categories"
-msgstr "カテゴリ"
-
-#: src/gui/main_window_ui.cpp:397
+#: src/gui/main_window_ui.cpp:137
 msgid "Install"
 msgstr "インストール"
 
-#: src/gui/main_window_ui.cpp:401
+#: src/gui/main_window_ui.cpp:139
 msgid "Remove"
 msgstr "削除"
 
-#: src/gui/main_window_ui.cpp:433
+#: src/gui/main_window_ui.cpp:161
+msgid "Installed"
+msgstr "インストール済み"
+
+#: src/gui/main_window_ui.cpp:163
+msgid "Outdated"
+msgstr "更新可能"
+
+#: src/gui/main_window_ui.cpp:164
+msgid "Categories"
+msgstr "カテゴリ"
+
+#: src/gui/main_window_ui.cpp:185
 msgid "Info"
 msgstr "情報"
 
-#: src/gui/main_window_ui.cpp:448
+#: src/gui/main_window_ui.cpp:193
 msgid "Files"
 msgstr "ファイル"
 
-#: src/gui/main_window_ui.cpp:464
+#: src/gui/main_window_ui.cpp:201
 msgid "Size"
 msgstr "サイズ"
 
-#: src/gui/main_window_ui.cpp:471
-msgid "Op"
-msgstr "操作"
-
-#: src/gui/main_window_ui.cpp:473
-msgid "Package"
-msgstr "パッケージ"
-
-#: src/gui/main_window_ui.cpp:485
+#: src/gui/main_window_ui.cpp:209
 msgid "Transaction"
 msgstr "操作"
 
-#: src/gui/main_window_ui.cpp:519
+#: src/gui/main_window_ui.cpp:243 src/gui/main_window_exec.cpp:100
 msgid "Show details"
 msgstr "詳細を表示"
 
-#: src/gui/main_window_ui.cpp:539 src/gui/main_window_exec.cpp:22
-#: src/gui/repository_editor.cpp:151
+#: src/gui/main_window_ui.cpp:252 src/gui/main_window_transaction.cpp:125
+#: src/gui/main_window_exec.cpp:30 src/gui/repository_editor.cpp:84
+#: src/gui/repository_editor.cpp:255 src/gui/window_utils.h:51
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: src/gui/main_window_actions.cpp:42
+#: src/gui/main_window_actions.cpp:63
 msgid "Syncing package databases..."
 msgstr "パッケージデータベースを同期しています..."
 
-#: src/gui/main_window_actions.cpp:49
+#: src/gui/main_window_actions.cpp:70
 msgid "Upgrading system..."
 msgstr "システムをアップグレードしています..."
 
-#: src/gui/main_window_actions.cpp:59
-msgid "Please select a package to install."
-msgstr "インストールするパッケージを選択してください。"
+#: src/gui/main_window_actions.cpp:79
+msgid "Please select a package to update."
+msgstr "更新するパッケージを選択してください。"
 
-#: src/gui/main_window_actions.cpp:73
-msgid "Package is already installed."
-msgstr "パッケージはすでにインストールされています。"
-
-#: src/gui/main_window_actions.cpp:87
-msgid "Please select a package to remove."
-msgstr "削除するパッケージを選択してください。"
-
-#: src/gui/main_window_actions.cpp:101
+#: src/gui/main_window_actions.cpp:83 src/gui/main_window_actions.cpp:113
 msgid "Package is not installed."
 msgstr "パッケージはインストールされていません。"
 
+#: src/gui/main_window_actions.cpp:89
+msgid "Updating package..."
+msgstr "パッケージを更新しています..."
+
+#: src/gui/main_window_actions.cpp:96
+msgid "Please select a package to install."
+msgstr "インストールするパッケージを選択してください。"
+
+#: src/gui/main_window_actions.cpp:100
+msgid "Package is already installed."
+msgstr "パッケージはすでにインストールされています。"
+
 #: src/gui/main_window_actions.cpp:109
+msgid "Please select a package to remove."
+msgstr "削除するパッケージを選択してください。"
+
+#: src/gui/main_window_actions.cpp:117
 #, c-format
 msgid "Cannot remove protected package: %s"
 msgstr "保護されたパッケージは削除できません: %s"
 
-#: src/gui/main_window_actions.cpp:133
+#: src/gui/main_window_actions.cpp:139
 msgid ""
 "A graphical package manager for XBPS.\n"
 "Built with FLTK."
@@ -290,7 +283,11 @@ msgstr ""
 "XBPS 用のグラフィカルなパッケージマネージャーです。\n"
 "FLTK で構築されています。"
 
-#: src/gui/main_window_actions.cpp:139
+#: src/gui/main_window_actions.cpp:141
+msgid "Authors:"
+msgstr ""
+
+#: src/gui/main_window_actions.cpp:143
 msgid ""
 "GUI: WTFPL\n"
 "Core/backend: BSD 3-Clause\n"
@@ -302,134 +299,151 @@ msgstr ""
 "\n"
 "Copyright (C) 2026 JavierC"
 
-#: src/gui/main_window_actions.cpp:151
+#: src/gui/main_window_actions.cpp:150
+msgid "Close"
+msgstr ""
+
+#: src/gui/main_window_actions.cpp:160
 msgid "Cannot change the language while an operation is running."
 msgstr "操作の実行中は言語を変更できません。"
 
-#: src/gui/main_window_packages.cpp:120
+#: src/gui/main_window_packages.cpp:109
+msgid "Name"
+msgstr "名前"
+
+#: src/gui/main_window_packages.cpp:110
+msgid "Version"
+msgstr "バージョン"
+
+#: src/gui/main_window_packages.cpp:110
+msgid "Description"
+msgstr "説明"
+
+#: src/gui/main_window_packages.cpp:144
 #, c-format
 msgid "Packages: %d"
 msgstr "パッケージ: %d"
 
-#: src/gui/main_window_packages.cpp:122
+#: src/gui/main_window_packages.cpp:146
 #, c-format
 msgid "Installed: %d"
 msgstr "インストール済み: %d"
 
-#: src/gui/main_window_packages.cpp:124
+#: src/gui/main_window_packages.cpp:148
 #, c-format
 msgid "Outdated: %d"
 msgstr "更新可能: %d"
 
-#: src/gui/main_window_packages.cpp:200 src/gui/main_window_packages.cpp:247
+#: src/gui/main_window_packages.cpp:223 src/gui/main_window_packages.cpp:270
 msgid "Name:"
 msgstr "名前:"
 
-#: src/gui/main_window_packages.cpp:201
+#: src/gui/main_window_packages.cpp:224
 msgid "Version:"
 msgstr "バージョン:"
 
-#: src/gui/main_window_packages.cpp:202 src/gui/repository_editor.cpp:167
+#: src/gui/main_window_packages.cpp:225 src/gui/repository_editor.cpp:78
 msgid "Repository:"
 msgstr "リポジトリ:"
 
-#: src/gui/main_window_packages.cpp:203
+#: src/gui/main_window_packages.cpp:226
 msgid "Description:"
 msgstr "説明:"
 
-#: src/gui/main_window_packages.cpp:221
+#: src/gui/main_window_packages.cpp:244
 msgid "--- Package Details ---"
 msgstr "--- パッケージの詳細 ---"
 
-#: src/gui/main_window_packages.cpp:222 src/gui/main_window_packages.cpp:236
+#: src/gui/main_window_packages.cpp:245 src/gui/main_window_packages.cpp:259
 msgid "Homepage:"
 msgstr "ホームページ:"
 
-#: src/gui/main_window_packages.cpp:223 src/gui/main_window_packages.cpp:237
+#: src/gui/main_window_packages.cpp:246 src/gui/main_window_packages.cpp:260
 msgid "License:"
 msgstr "ライセンス:"
 
-#: src/gui/main_window_packages.cpp:224 src/gui/main_window_packages.cpp:238
+#: src/gui/main_window_packages.cpp:247 src/gui/main_window_packages.cpp:261
 msgid "Maintainer:"
 msgstr "メンテナー:"
 
-#: src/gui/main_window_packages.cpp:225 src/gui/main_window_packages.cpp:239
+#: src/gui/main_window_packages.cpp:248 src/gui/main_window_packages.cpp:262
 msgid "Arch:"
 msgstr "アーキテクチャ:"
 
-#: src/gui/main_window_packages.cpp:226
+#: src/gui/main_window_packages.cpp:249
 msgid "Build Date:"
 msgstr "ビルド日:"
 
-#: src/gui/main_window_packages.cpp:227
+#: src/gui/main_window_packages.cpp:250
 msgid "Install Date:"
 msgstr "インストール日:"
 
-#: src/gui/main_window_packages.cpp:228 src/gui/main_window_packages.cpp:240
+#: src/gui/main_window_packages.cpp:251 src/gui/main_window_packages.cpp:263
 msgid "Depends On:"
 msgstr "依存関係:"
 
-#: src/gui/main_window_packages.cpp:229 src/gui/main_window_packages.cpp:241
+#: src/gui/main_window_packages.cpp:252 src/gui/main_window_packages.cpp:264
 msgid "Opt Deps:"
 msgstr "任意の依存関係:"
 
-#: src/gui/main_window_packages.cpp:230
+#: src/gui/main_window_packages.cpp:253
 msgid "Required By:"
 msgstr "被依存:"
 
-#: src/gui/main_window_packages.cpp:231 src/gui/main_window_packages.cpp:242
+#: src/gui/main_window_packages.cpp:254 src/gui/main_window_packages.cpp:265
 msgid "Conflicts:"
 msgstr "競合:"
 
-#: src/gui/main_window_packages.cpp:232
+#: src/gui/main_window_packages.cpp:255
 msgid "Replaces:"
 msgstr "置換:"
 
-#: src/gui/main_window_packages.cpp:233
+#: src/gui/main_window_packages.cpp:256
 msgid "Options:"
 msgstr "オプション:"
 
-#: src/gui/main_window_packages.cpp:235
+#: src/gui/main_window_packages.cpp:258
 msgid "--- Remote Package Details ---"
 msgstr "--- リモートパッケージの詳細 ---"
 
-#: src/gui/main_window_packages.cpp:248
+#: src/gui/main_window_packages.cpp:271
 msgid "Download Size:"
 msgstr "ダウンロードサイズ:"
 
-#: src/gui/main_window_packages.cpp:249
+#: src/gui/main_window_packages.cpp:272
 msgid "Installed Size:"
 msgstr "インストールサイズ:"
 
-#: src/gui/main_window_transaction.cpp:94
+#: src/gui/main_window_transaction.cpp:109
 msgid "No pending transactions."
 msgstr "保留中の操作はありません。"
 
-#: src/gui/main_window_transaction.cpp:100
+#: src/gui/main_window_transaction.cpp:113
 msgid "Execute transaction?"
 msgstr "操作を実行しますか?"
 
-#: src/gui/main_window_transaction.cpp:102
+#: src/gui/main_window_transaction.cpp:115
 msgid "Install: "
 msgstr "インストール: "
 
-#: src/gui/main_window_transaction.cpp:107
+#: src/gui/main_window_transaction.cpp:120
 msgid "Remove: "
 msgstr "削除: "
 
-#: src/gui/main_window_transaction.cpp:115 src/gui/main_window_exec.cpp:56
+#: src/gui/main_window_transaction.cpp:125 src/gui/main_window_exec.cpp:65
+#: src/gui/window_utils.h:52
 msgid "OK"
 msgstr "OK"
 
-#: src/gui/main_window_transaction.cpp:126
+#: src/gui/main_window_transaction.cpp:132
 msgid "Installing packages..."
 msgstr "パッケージをインストールしています..."
 
-#: src/gui/main_window_transaction.cpp:131
+#: src/gui/main_window_transaction.cpp:137
 msgid "Removing packages..."
 msgstr "パッケージを削除しています..."
 
-#: src/gui/main_window_exec.cpp:42
+#: src/gui/main_window_exec.cpp:51
 #, c-format
 msgid ""
 "=== %s ===\n"
@@ -438,44 +452,48 @@ msgstr ""
 "=== %s ===\n"
 "\n"
 
-#: src/gui/main_window_exec.cpp:115
+#: src/gui/main_window_exec.cpp:97
+msgid "Hide details"
+msgstr "詳細を隠す"
+
+#: src/gui/main_window_exec.cpp:137
 msgid "Error: privileged helper is not available.\n"
 msgstr "エラー: 特権ヘルパーを利用できません。\n"
 
-#: src/gui/repository_editor.cpp:79 src/gui/repository_editor.cpp:149
+#: src/gui/repository_editor.cpp:69 src/gui/repository_editor.cpp:150
 msgid "Add repository"
 msgstr "リポジトリを追加"
 
-#: src/gui/repository_editor.cpp:84
-msgid "Delete selected repository"
-msgstr "選択したリポジトリを削除"
-
-#: src/gui/repository_editor.cpp:88
-msgid "Save"
-msgstr "保存"
-
-#: src/gui/repository_editor.cpp:89
-msgid "Save repositories (requires root)"
-msgstr "リポジトリを保存 (root 権限が必要)"
-
-#: src/gui/repository_editor.cpp:152
-msgid "Add"
-msgstr "追加"
-
-#: src/gui/repository_editor.cpp:165
+#: src/gui/repository_editor.cpp:73
 msgid "File name:"
 msgstr "ファイル名:"
 
-#: src/gui/repository_editor.cpp:188
+#: src/gui/repository_editor.cpp:86
+msgid "Add"
+msgstr "追加"
+
+#: src/gui/repository_editor.cpp:154
+msgid "Delete selected repository"
+msgstr "選択したリポジトリを削除"
+
+#: src/gui/repository_editor.cpp:157
+msgid "Save"
+msgstr "保存"
+
+#: src/gui/repository_editor.cpp:158
+msgid "Save repositories (requires root)"
+msgstr "リポジトリを保存 (root 権限が必要)"
+
+#: src/gui/repository_editor.cpp:230
 #, c-format
 msgid "A file named '%s' already exists."
 msgstr "「%s」という名前のファイルはすでに存在します。"
 
-#: src/gui/repository_editor.cpp:198
+#: src/gui/repository_editor.cpp:236
 msgid "The repository URL cannot be empty."
 msgstr "リポジトリの URL は空にできません。"
 
-#: src/gui/repository_editor.cpp:217
+#: src/gui/repository_editor.cpp:253
 #, c-format
 msgid ""
 "Delete repository '%s'?\n"
@@ -486,22 +504,41 @@ msgstr ""
 "\n"
 "実行内容: rm -f /etc/xbps.d/%s"
 
-#: src/gui/repository_editor.cpp:219
+#: src/gui/repository_editor.cpp:255
 msgid "Delete"
 msgstr "削除"
 
-#: src/gui/repository_editor.cpp:252
+#: src/gui/repository_editor.cpp:291
 msgid "Failed to delete repository."
 msgstr "リポジトリの削除に失敗しました。"
 
-#: src/gui/repository_editor.cpp:264
+#: src/gui/repository_editor.cpp:298
 msgid "No repositories to save."
 msgstr "保存するリポジトリがありません。"
 
-#: src/gui/repository_editor.cpp:312
+#: src/gui/repository_editor.cpp:337
 msgid "Repositories saved successfully."
 msgstr "リポジトリを保存しました。"
 
-#: src/gui/repository_editor.cpp:314
+#: src/gui/repository_editor.cpp:339
 msgid "Failed to save repositories."
 msgstr "リポジトリの保存に失敗しました。"
+
+#: src/gui/window_utils.h:54
+msgid ""
+"This operation requires pkexec permissions.\n"
+"\n"
+"Press OK to authenticate. The privileged helper will be restarted."
+msgstr ""
+"この操作には pkexec の権限が必要です。\n"
+"\n"
+"OK を押して認証してください。特権ヘルパーが再起動されます。"
+
+#~ msgid "Español"
+#~ msgstr "スペイン語"
+
+#~ msgid "Op"
+#~ msgstr "操作"
+
+#~ msgid "Package"
+#~ msgstr "パッケージ"

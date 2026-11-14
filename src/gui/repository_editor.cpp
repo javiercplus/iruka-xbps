@@ -2,6 +2,7 @@
 #include "constants.h"
 #include "i18n.h"
 #include "privileged_daemon.h"
+#include "window_utils.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Button.H>
@@ -132,7 +133,7 @@ RepositoryEditor::~RepositoryEditor() {
 }
 
 void RepositoryEditor::show() {
-  m_window->show();
+  gui_utils::showCentered(m_window, m_parent);
 }
 
 void RepositoryEditor::close() {
@@ -255,6 +256,8 @@ void RepositoryEditor::deleteRepository() {
                          fileName.c_str(), fileName.c_str());
   if (choice != 1) return;
 
+  if (!gui_utils::requestPkexecPrivileges()) return;
+
   std::string cmd = "rm -f " + std::string(REPO_DIR) + "/" + fileName;
 
   auto *result = new DeleteResult();
@@ -295,6 +298,8 @@ void RepositoryEditor::saveAll() {
     fl_message("%s", _("No repositories to save."));
     return;
   }
+
+  if (!gui_utils::requestPkexecPrivileges()) return;
 
   std::string command;
   std::string pidStr = std::to_string(getpid());

@@ -8,6 +8,20 @@
 #include <FL/Fl_Text_Buffer.H>
 #include <cstring>
 
+namespace {
+
+void open_about_awake(void *data) {
+    auto *win = static_cast<MainWindow *>(data);
+    if (!win->isDestroyed()) win->do_about();
+}
+
+void open_repositories_awake(void *data) {
+    auto *win = static_cast<MainWindow *>(data);
+    if (!win->isDestroyed()) win->openRepositories();
+}
+
+}
+
 void load_done_awake(void *data) {
     auto *r = static_cast<LoadResult *>(data);
     if (!r->win->isDestroyed()) {
@@ -92,10 +106,10 @@ void MainWindow::cb_menu_clear(Fl_Widget *, void *d) {
 }
 
 void MainWindow::cb_menu_about(Fl_Widget *, void *d) {
-    static_cast<MainWindow *>(d)->do_about();
+    Fl::awake(open_about_awake, d);
 }
 void MainWindow::cb_menu_repositories(Fl_Widget *, void *d) {
-    static_cast<MainWindow *>(d)->openRepositories();
+    Fl::awake(open_repositories_awake, d);
 }
 
 void MainWindow::cb_menu_language_system(Fl_Widget *, void *d) {

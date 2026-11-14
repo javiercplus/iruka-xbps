@@ -8,3 +8,4 @@ src/gui/main_window_packages.cpp
 src/gui/main_window_transaction.cpp
 src/gui/main_window_exec.cpp
 src/gui/repository_editor.cpp
+src/gui/window_utils.h

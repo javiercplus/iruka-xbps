@@ -7,6 +7,7 @@
 #include "utils.h"
 #include "logo.h"
 #include "i18n.h"
+#include "window_utils.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
@@ -125,10 +126,11 @@ void MainWindow::openRepositories() {
 }
 
 void MainWindow::do_about() {
-    Fl_Window *dlg = new Fl_Window(400, 330, _("About"));
+    Fl_Window *dlg = new Fl_Window(420, 390, _("About"));
     dlg->begin();
 
-    LogoBox *logo = new LogoBox(160, 16, 80, 80);
+    const int logoSize = 96;
+    LogoBox *logo = new LogoBox((420 - logoSize) / 2, 24, logoSize, logoSize);
     Fl_Image *img = logo_image();
     if (img) logo->setOwned(img);
 
@@ -141,16 +143,16 @@ void MainWindow::do_about() {
     text += _("GUI: WTFPL\nCore/backend: BSD 3-Clause\n\n"
              "Copyright (C) 2026 JavierC");
 
-    Fl_Box *info = new Fl_Box(20, 108, 360, 160, "");
+    Fl_Box *info = new Fl_Box(28, 136, 364, 200, "");
     info->copy_label(text.c_str());
     info->align(FL_ALIGN_TOP | FL_ALIGN_INSIDE | FL_ALIGN_WRAP);
 
-    Fl_Button *close = new Fl_Button(160, 284, 80, 28, _("Close"));
+    Fl_Button *close = new Fl_Button((420 - 90) / 2, 348, 90, 28, _("Close"));
     close->callback(about_close, nullptr);
 
     dlg->end();
     dlg->callback(about_close, nullptr);
-    dlg->show();
+    gui_utils::showCentered(dlg, m_window);
 }
 
 void MainWindow::setLanguage(const std::string &lang) {
